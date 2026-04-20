@@ -169,18 +169,16 @@ export async function generateWithGemini(
 ): Promise<string> {
   const genAI = new GoogleGenerativeAI(apiKey);
 
-  // Try primary model with retries
-  const primaryModel = "gemini-2.5-flash";
-  const fallbackModel = "gemini-2.5-flash-lite";
-  const maxRetries = 2;
+  // Use gemini-2.5-flash-lite with 5 retries (6 total attempts)
+  const modelName = "gemini-2.5-flash-lite";
+  const maxRetries = 5;
 
-  // Try primary model first
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`Attempt ${attempt + 1}/${maxRetries + 1} with model: ${primaryModel}`);
+      console.log(`Attempt ${attempt + 1}/${maxRetries + 1} with model: ${modelName}`);
 
       const model = genAI.getGenerativeModel({
-        model: primaryModel,
+        model: modelName,
         systemInstruction: systemPrompt,
       });
 
@@ -188,43 +186,26 @@ export async function generateWithGemini(
       const response = result.response;
       const text = response.text();
 
-      console.log(`✓ Success with ${primaryModel} on attempt ${attempt + 1}`);
+      console.log(`✓ Success with ${modelName} on attempt ${attempt + 1}`);
       return text;
     } catch (error: any) {
-      console.log(`✗ Attempt ${attempt + 1} failed with ${primaryModel}:`, error.message);
+      console.log(`✗ Attempt ${attempt + 1} failed with ${modelName}:`, error.message);
 
-      // If it's the last retry, move to fallback
+      // If it's the last retry, throw error
       if (attempt === maxRetries) {
-        console.log(`Switching to fallback model: ${fallbackModel}`);
-        break;
+        console.error(`✗ All ${maxRetries + 1} attempts failed with ${modelName}`);
+        throw new Error(`Failed after ${maxRetries + 1} attempts. Last error: ${error.message}`);
       }
 
-      // Wait before retrying (exponential backoff)
-      const waitTime = Math.pow(2, attempt) * 1000; // 1s, 2s
+      // Wait before retrying (exponential backoff: 1s, 2s, 4s, 8s, 16s)
+      const waitTime = Math.pow(2, attempt) * 1000;
       console.log(`Waiting ${waitTime}ms before retry...`);
       await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }
 
-  // Try fallback model
-  try {
-    console.log(`Trying fallback model: ${fallbackModel}`);
-
-    const model = genAI.getGenerativeModel({
-      model: fallbackModel,
-      systemInstruction: systemPrompt,
-    });
-
-    const result = await model.generateContent(userPrompt);
-    const response = result.response;
-    const text = response.text();
-
-    console.log(`✓ Success with fallback model: ${fallbackModel}`);
-    return text;
-  } catch (error: any) {
-    console.error(`✗ Fallback model ${fallbackModel} also failed:`, error.message);
-    throw new Error(`All models failed. Last error: ${error.message}`);
-  }
+  // This should never be reached, but TypeScript needs it
+  throw new Error("Unexpected error in generateWithGemini");
 }
 
 /**
