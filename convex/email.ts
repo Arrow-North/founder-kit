@@ -17,7 +17,7 @@ export const sendEmail = action({
     html: v.string(),
     from: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
       throw new Error("RESEND_API_KEY environment variable is not set");
@@ -27,7 +27,7 @@ export const sendEmail = action({
       const resend = new Resend(apiKey);
 
       const result = await resend.emails.send({
-        from: args.from || 'onboarding@resend.dev',
+        from: args.from || 'lpham@arrownorth.design',
         to: args.to,
         subject: args.subject,
         html: args.html,
@@ -59,7 +59,7 @@ export const sendFounderKitEmail = action({
       uxPlaybook: v.string(),
     }),
   },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
       throw new Error("RESEND_API_KEY environment variable is not set");
@@ -194,7 +194,7 @@ export const sendFounderKitEmail = action({
       `;
 
       const result = await resend.emails.send({
-        from: 'Founder\'s Idea Kit <onboarding@resend.dev>',
+        from: 'Arrow North Team <lpham@arrownorth.design>',
         to: args.to,
         subject: `${args.firstName}, Your Founder's Idea Kit is Ready! 🎉`,
         html: emailHtml,
@@ -222,7 +222,7 @@ export const sendFounderKitEmailWithDocs = action({
     firstName: v.string(),
     lastName: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ success: boolean; data: any }> => {
     console.log(`📧 Fetching document URLs for ${args.userId}...`);
 
     // Query the documents for this user
