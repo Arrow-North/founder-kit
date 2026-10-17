@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMutation, useAction } from 'convex/react';
+import { useAction } from 'convex/react';
 import { api } from '../convex/_generated/api';
 import { QuestionScreen, Question } from './components/QuestionScreen';
 import { EmailCaptureScreen } from './components/EmailCaptureScreen';
@@ -92,15 +92,8 @@ export function App() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
-  const createSubmission = useMutation(api.submissions.createSubmission);
-
-  // Document generation with real AI and exponential backoff
-  const createValidationDoc = useAction(api.documentGeneration.createValidationDoc);
-  const createVibeCodingPrompt = useAction(api.documentGeneration.createVibeCodingPrompt);
-  const createUxPlaybook = useAction(api.documentGeneration.createUxPlaybook);
-
-  // Email sending
-  const sendFounderKitEmailWithDocs = useAction(api.email.sendFounderKitEmailWithDocs);
+  // Saves the submission and starts kit generation on the server
+  const startKit = useAction(api.kits.startKit);
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -130,13 +123,6 @@ export function App() {
     // Move to loading screen immediately
     setCurrentScreen('loading');
 
-    // Helper function for exponential backoff delay
-    const exponentialDelay = async (attemptNumber: number, baseDelay: number = 5000) => {
-      const delay = baseDelay * Math.pow(2, attemptNumber);
-      console.log(`⏳ Waiting ${delay / 1000}s before next generation (exponential backoff)...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-    };
-
     try {
       // Prepare the answers object
       const answersData = {
@@ -149,91 +135,17 @@ export function App() {
         q7: answers.q7 || '',
       };
 
-      // Step 1: Save submission to database
-      console.log('Saving submission...');
-      await createSubmission({
+      // One server call: saves the submission and schedules generation
+      const { kitId } = await startKit({
         firstName: submittedFirstName,
         lastName: submittedLastName,
         email: submittedEmail,
         answers: answersData,
       });
-      console.log('✓ Submission saved successfully!');
-
-      let currentAttempt = 0;
-      let allDocsGenerated = false;
-
-      while (!allDocsGenerated && currentAttempt < 3) {
-        try {
-          // Step 2: Generate Validation Document
-          console.log(`\n📄 Generating validation document (attempt ${currentAttempt + 1}/3)...`);
-          await createValidationDoc({
-            userId: submittedEmail,
-            answers: answersData,
-          });
-          console.log('✓ Validation document generated!');
-
-          // Wait before next call (exponential backoff)
-          await exponentialDelay(currentAttempt, 5000); // 5s, 10s, 20s
-
-          // Step 3: Generate Vibe Coding Prompts
-          console.log(`\n💻 Generating vibe coding prompts (attempt ${currentAttempt + 1}/3)...`);
-          await createVibeCodingPrompt({
-            userId: submittedEmail,
-            answers: answersData,
-          });
-          console.log('✓ Vibe coding prompts generated!');
-
-          // Wait before next call (exponential backoff)
-          await exponentialDelay(currentAttempt, 5000); // 5s, 10s, 20s
-
-          // Step 4: Generate UX Playbook
-          console.log(`\n🎨 Generating UX playbook (attempt ${currentAttempt + 1}/3)...`);
-          await createUxPlaybook({
-            userId: submittedEmail,
-            answers: answersData,
-          });
-          console.log('✓ UX playbook generated!');
-
-          allDocsGenerated = true;
-          console.log('\n🎉 All documents generated successfully!');
-
-          // Send email with document links
-          try {
-            console.log('\n📧 Sending email with documents...');
-
-            // Wait a moment to ensure all documents are fully committed to storage
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            // Send email with document URLs (fetched automatically)
-            await sendFounderKitEmailWithDocs({
-              userId: submittedEmail,
-              firstName: submittedFirstName,
-              lastName: submittedLastName,
-            });
-
-            console.log('✓ Email sent successfully with document links!');
-
-          } catch (emailError: any) {
-            console.error('⚠️ Error sending email (documents still generated):', emailError.message);
-            // Continue anyway - documents are generated even if email fails
-          }
-        } catch (error: any) {
-          currentAttempt++;
-          console.error(`\n❌ Error on attempt ${currentAttempt}:`, error.message);
-
-          if (currentAttempt < 3) {
-            const retryDelay = 15000 * Math.pow(2, currentAttempt - 1); // 15s, 30s
-            console.log(`\n🔄 Retrying all documents in ${retryDelay / 1000}s...`);
-            await new Promise(resolve => setTimeout(resolve, retryDelay));
-          } else {
-            console.error('\n❌ All retry attempts exhausted');
-            throw error;
-          }
-        }
-      }
+      console.log('✓ Kit started:', kitId);
     } catch (error) {
-      console.error('\n❌ Final error after all attempts:', error);
-      alert('There was an error generating your documents. Please check the console. You may need to wait a few minutes due to API rate limits, or use test mode.');
+      console.error('❌ Error starting kit:', error);
+      alert('There was an error starting your kit. Please try again in a moment.');
     }
   };
 

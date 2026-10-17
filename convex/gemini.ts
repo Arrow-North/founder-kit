@@ -1,312 +1,368 @@
 /**
- * Google Gemini API integration for document generation
+ * Google Gemini API integration for Founder Kit generation (JSON mode).
+ * Prompt text is copied word for word from PROMPTS-v1.md.
  */
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType, type ResponseSchema } from "@google/generative-ai";
+import type { Infer } from "convex/values";
+import { phaseValidator, summaryValidator } from "./schema";
 
-// Templates content (embedded to avoid file system reads in serverless)
-const TEMPLATE_A = `Idea: <q1>
-Target user: <q2>
-Pain point: <q3>
-Current workaround: <q4>
-Solution: <q5>
-Desired outcome: <q6>
-Biggest uncertainty: <q7>
+const MODEL_NAME = "gemini-2.5-flash-lite";
+const MAX_API_ATTEMPTS = 3;
 
-Generate a user interview guide with exactly this structure:
+export type Answers = {
+  q1: string;
+  q2: string;
+  q3: string;
+  q4: string;
+  q5: string;
+  q6: string;
+  q7: string;
+};
+export type Summary = Infer<typeof summaryValidator>;
+export type Phase = Infer<typeof phaseValidator>;
+export type PhaseKey = "validate" | "design" | "build";
+export const PHASE_KEYS: PhaseKey[] = ["validate", "design", "build"];
 
-RESEARCH OBJECTIVE
-One sentence. Built around q7 — what this research needs to answer, not what the product does.
+const SHARED_RULES = `Writing rules. Follow all of them.
+- Write for a first-time, non-technical founder. Plain words, short sentences, speak to them as "you".
+- Use the founder's own specifics. Name the product, the user and the problem inside every prompt you write.
+- Every prompt must stand alone. The founder pastes it into a fresh chat with no other context, so include everything the AI tool needs to know about the product.
+- Every prompt must be complete and ready to paste. Never use square brackets, curly braces, angle brackets, blanks, or fill-in-the-blank text.
+- Never include code, code blocks, backticks, file names, or technical markup.
+- Never mention dates, years, or prices of tools.
+- If an answer is thin or missing, make a sensible assumption from the other answers and say so inside the prompt, for example "Assume the main user is a solo bookkeeper." Never switch to a different product or invent a new idea.
+- Each todo list has at most 3 lines. Each line starts with a verb and stays under 15 words.
+- Each goal is one sentence.`;
 
-USER RECRUITMENT
-Who to recruit (role and situation from q2). One to two sentence opening the interviewer can use verbatim.
+const withRules = (system: string) => `${system}\n\n${SHARED_RULES}`;
 
-SECTION 1 — PAIN PROBE
-One question testing whether the pain in q3 is real and frequent. (If they go surface-level: one follow-up probe)
+const SUMMARY_SYSTEM = withRules(`You turn a founder's rough answers into a short product summary. Every later document relies on it, so it must stay faithful to the founder's idea.
 
-SECTION 2 — WORKAROUND PROBE
-One question surfacing how entrenched q4 is and where it breaks down. (If they go surface-level: one follow-up probe)
+Return:
+- productName: the name the founder used. If there is none, a plain 1 to 3 word working name that says what it does. No puns, no invented brand words.
+- pitch: one sentence under 20 words in the form "X helps Y do Z without W."
+- targetUser: one specific kind of person, with their role and situation.
+- problem: the pain in one or two sentences, in the user's terms.
+- currentWorkaround: what they do today instead.
+- coreOutcome: the single result the user gets from the product.
+- riskiestAssumption: the one belief that, if wrong, sinks the idea. Draw it from answer 7 when possible.`);
 
-SECTION 3 — SOLUTION FIT
-One question testing whether the outcome in q6 is what the user actually wants. (If they go surface-level: one follow-up probe)
+const VALIDATE_SYSTEM = withRules(`You are a customer-research coach. You help a first-time founder learn, within one week and before building anything, whether the problem is real. Produce exactly 4 steps in this order. Each step has a goal, a todo list, a ready-to-paste prompt for ChatGPT or Claude, and an optional one-line tip.
 
-SECTION 4 — ASSUMPTION TEST
-One question aimed directly at q7. Specific to what they said — not generic. (If they go surface-level: one follow-up probe)
+Phase intro: one or two sentences on what this phase gets them: proof from real people before spending time or money.
 
-CLOSING
-One standard closing question.`;
+Step 1, Recruit 5 people. The prompt asks the AI to list 10 specific places where this target user can be found (communities, groups, job sites, events) and to write a short, friendly outreach message asking for a 20-minute chat about the problem. The message must not pitch the product.
 
-const SYSTEM_A = `You are a UX researcher writing a user interview guide for a startup founder preparing to talk to potential customers for the first time.
+Step 2, Interview script. The prompt asks the AI to write a 20-minute interview script about the person's past behaviour: the last time the problem happened, what they did, what the workaround costs them, and what they have already tried. It must include follow-up probes, at least two questions that test the riskiest assumption, and a closing ask for referrals. It must not ask whether they would use or pay for the product.
 
-Your job is to write a focused, practical interview document they can pick up and use immediately — no research background required.
+Step 3, Make sense of the notes. The prompt is used after the interviews. It gives the AI the product context, then tells the founder to paste their interview notes below it. It asks for: the pains that repeated, the workarounds people actually use, evidence for and against the riskiest assumption, and the strongest direct quotes.
 
-Rules:
-- Write only the document. No preamble, no explanation, no commentary.
-- Use plain conversational language. No jargon.
-- Every question should feel like natural conversation, not a survey.
-- No yes/no questions anywhere in the document.
-- Each section gets one primary question and one follow-up probe in parentheses, labeled "If they go surface-level."
-- Section 4 must be built specifically around the founder's stated uncertainty — not generic competitive questions.
-- Format with clear section headers exactly as specified.`;
+Step 4, Go, adjust or stop. The prompt asks the AI to make a call using these rules. Go: 3 or more of the 5 described the pain without prompting and already use a workaround. Adjust: the pain is real but belongs to a different user or a different problem. Stop: fewer than 2 described the pain. It asks for a one-paragraph decision and the single next action.`);
 
-const TEMPLATE_B = `Idea: <q1>
-Target user: <q2>
-Pain point: <q3>
-Current workaround: <q4>
-Solution: <q5>
-Desired outcome: <q6>
-Biggest uncertainty: <q7>
+const DESIGN_SYSTEM = withRules(`You are a product designer. You help a non-technical founder turn a validated idea into a clear plan for a small first version before anything is built. Produce exactly 4 steps in this order. Each step has a goal, a todo list, a ready-to-paste prompt for ChatGPT or Claude, and an optional one-line tip.
 
-Generate the following three parts:
+Phase intro: one or two sentences on what this phase gets them: a first version small enough to build in days, aimed at the biggest pain.
 
----
-JUMP-START PROMPT
-(Label: "Paste this into Bolt, v0, or Replit to get started")
+Step 1, One-page brief. The prompt asks the AI to write a one-page brief: who it is for, the problem, the outcome, what is in the first version (at most 3 features), what is deliberately left out, and how the founder will know it works.
 
-A single self-contained prompt the founder pastes into their coding tool. Must include:
-- Full product context inline
-- Specific interface type decision derived from the product — not defaulted
-- Instruction to use realistic domain-specific data — real names, real units, 
-  real values for this industry. No placeholders.
-- Specific description of which screen to build: the one that gets a real 
-  reaction from the user in q2, organized around q7
-- Build as single React component with Tailwind CSS, one file, demo-ready today
+Step 2, Journey map. The prompt asks the AI to map the user's journey step by step, first as it happens today with the workaround, then as it would happen with the product, marking where time, money or patience is lost.
 
----
-PATH A — DESIGN REFINEMENT
-(Label: "If you want to refine how it looks first")
+Step 3, Find the friction. The prompt asks the AI to review that journey, name the 3 moments where users are most likely to get stuck, confused or give up, and recommend the smallest product that removes the biggest one. Everything else gets cut from the first version.
 
-Three prompts each starting with "Using what you just built":
-1. Strengthen visual hierarchy — most important info most prominent
-2. Improve data clarity — numbers and comparisons instantly readable
-3. Add one micro-interaction — hover state, indicator, or tooltip that makes 
-   it feel like a real product
+Step 4, Key screens. The prompt asks the AI to describe 3 to 5 screens in plain words: each screen's name, its purpose, what is on it, and the one main action. The founder carries this screen list into the Build phase.`);
 
----
-PATH B — DEEPER BUILD
-(Label: "If you want to build out the full product")
+const BUILD_SYSTEM = withRules(`You are a senior product builder coaching a non-technical founder who uses an AI app builder such as Bolt, Lovable, v0 or Replit. The goal is a clickable first version they can put in front of the 5 people from their interviews. Produce exactly 5 steps in this order. The founder pastes each prompt into the same app-builder project, one at a time. Each step has a goal, a todo list, a ready-to-paste prompt, and an optional one-line tip.
 
-Four sequential prompts each starting with "Using the context above and what 
-was built so far":
-1. First action — the interaction that starts the core workflow, plus what the 
-   screen looks like immediately after
-2. Core functionality — the full result from q5 with realistic data throughout
-3. Outcome state — destination view from q6, able to stand alone as a demo
-4. Second validation screen — tests a different aspect from the jump-start; 
-   ends with the one question to ask a real user when showing it
-`;
+Describe screens and behaviour in plain words only. Never name programming languages, frameworks or databases. Keep the first version to 3 to 5 screens and the scope of the one-page brief.
 
-const SYSTEM_B = `### Structure
-Three parts delivered together. Founder chooses direction after the jump-start.
+Phase intro: one or two sentences on what this phase gets them: a working version people can click through, built one piece at a time.
 
-1. **Jump-Start Prompt** — one paste → working demo-ready screen
-2. **Path A: Design Refinement** — polish what the jump-start built
-3. **Path B: Deeper Build** — build out the full product flow
+Step 1, Jump-start. The prompt creates the project: what the app is, who it is for, the 3 to 5 screens by name and purpose, a simple clean look, and realistic sample data that fits this user. No logins or payments yet.
 
-### System Prompt
+Step 2, Core flow. The prompt makes the main task work from start to finish: the one thing the user came to do, with sample data that stays saved between visits.
 
-You are a technical product strategist writing a prompt package for a 
-non-technical founder to use with AI coding tools like Bolt, v0, or Replit.
+Step 3, Outcome screen. The prompt builds the screen that shows the core outcome. The user should understand their result within five seconds.
 
-The package has three parts:
-1. A jump-start prompt — one paste that produces a working demo-ready screen
-2. A design refinement path — for polishing what the jump-start built
-3. A deeper build path — for founders who want to build out the full product flow
+Step 4, Polish. The prompt adds empty states, loading states, plain-language error messages, a layout that works on a phone, and clearer button labels.
 
-Rules:
-- Write only the three parts. No preamble, no explanation, no commentary.
-- The jump-start prompt must produce a complete, realistic screen on the first 
-  paste. Realistic domain-specific data only — no "Lorem ipsum" or "Sample data."
-- Before writing the jump-start, determine what type of interface this product 
-  actually is. Let that decision shape the prompt. Do not default to "dashboard 
-  with sidebar" unless the product genuinely requires it.
-- The jump-start prompt must be self-contained — the founder pastes it with no 
-  setup or modification. Full context is included inline.
-- The jump-start screen must directly address the uncertainty in q7. A real user 
-  should be able to look at it and say yes or no.
-- Path A and Path B prompts each start with "Using what you just built" so the 
-  founder understands they build on the jump-start output.
-- Keep all language non-technical.`;
+Step 5, Ready to test. The prompt adds a short welcome that explains the app, a simple feedback form, and a final check of the main flow. The todo covers sharing the link with the 5 interviewees and watching them use it without helping.`);
 
-const TEMPLATE_C = `Idea: <q1>
-Target user: <q2>
-Pain point: <q3>
-Current workaround: <q4>
-Solution: <q5>
-Desired outcome: <q6>
-Biggest uncertainty: <q7>
+const CHAT_TOOL = "ChatGPT or Claude";
+const APP_BUILDER = "Your app-builder project (Bolt, Lovable, v0 or Replit)";
 
-Generate a UX playbook with exactly this structure:
+const PHASES: Record<PhaseKey, { system: string; titles: string[]; pasteInto: string }> = {
+  validate: {
+    system: VALIDATE_SYSTEM,
+    titles: ["Recruit 5 people", "Interview script", "Make sense of the notes", "Go / adjust / stop"],
+    pasteInto: CHAT_TOOL,
+  },
+  design: {
+    system: DESIGN_SYSTEM,
+    titles: ["One-page brief", "Journey map", "Find the friction", "Key screens"],
+    pasteInto: CHAT_TOOL,
+  },
+  build: {
+    system: BUILD_SYSTEM,
+    titles: ["Jump-start", "Core flow", "Outcome screen", "Polish", "Ready to test"],
+    pasteInto: APP_BUILDER,
+  },
+};
 
----
-PHASE 1 — YOUR PRODUCT BRIEF
----
+const NO_ANSWER = "(no answer given)";
+const answerOrNone = (value: string) => (value.trim() === "" ? NO_ANSWER : value.trim());
 
-PRODUCT
-Two to three sentences. What it is, who it's for, what it does.
-
-USER
-Two to three sentences. Specific role and situation from q2. Not demographics.
-
-BEFORE STATE
-Two to three sentences. Real person's experience using q3 and q4 together.
-
-AFTER STATE
-Two to three sentences. What changes from q6. What they can do now that they 
-couldn't before.
-
-CORE FLOW
-4 to 6 steps. Each step uses exactly this 4-line format:
-
-[Step number]. [Step name]
-Action: [what the user does — one sentence starting with a verb]
-Feeling: [the emotion the user likely has at this moment — one sentence]
-Risk: [what breaks down here if the design gets it wrong — one sentence]
-Status: [Exists / Needs building / Undefined]
-
-WHAT TO DESIGN FIRST
-Two to three sentences. Where to concentrate effort to test q7 specifically.
-
-OPEN QUESTIONS
-3 to 4 unresolved questions the brief exposes — things the founder needs to 
-answer before their next stage of work.
-
----
-PHASE 2 — CREATE YOUR UX JOURNEY
----
-
-[One sentence intro: "Use these prompts to turn your core flow into a visual 
-UX journey map. Paste each one into Claude or ChatGPT in order."]
-
-JOURNEY PROMPT 1 — MAP THE FULL EXPERIENCE
-[A self-contained prompt that takes the full core flow above and asks Claude 
-to generate a complete UX journey map — each step with what the user sees, 
-thinks, feels, and does. Framed as a journey from the user's first touchpoint 
-to the final outcome. Instructs Claude to present it as a structured table or 
-stage-by-stage breakdown the founder can read top to bottom.]
-
-JOURNEY PROMPT 2 — FIND THE FRICTION
-[A self-contained prompt that takes the journey map output and asks Claude to 
-identify the 2 to 3 moments of highest friction — where the user is most 
-likely to drop off, get confused, or lose trust. For each friction point: 
-what causes it, what the user experiences, and one design intervention that 
-would resolve it.]
-
-JOURNEY PROMPT 3 — VISUALIZE AS A DIAGRAM
-[A self-contained prompt that asks Claude to render the UX journey as a 
-text-based flow diagram — stages across the top, user actions and emotions 
-below each stage, friction points highlighted. Tell the founder this is their 
-UX journey map they can use to make design decisions, share with a designer 
-or developer, and return to as they build.]
-`;
-
-const SYSTEM_C = `### Structure
-Two phases delivered together. A founder may work through only Phase 1 or continue into Phase 2.
-
-- **Phase 1** — The playbook: user definition, before/after states, enhanced core flow, what to design first, open questions
-- **Phase 2** — UX Journey Prompt Set: 3 prompts the founder pastes into Claude to generate a visual UX journey map of the full experience
-
-### System Prompt
-You are a UX designer writing a two-phase product brief for a founder who is 
-about to design or build their product for the first time.
-
-Rules:
-- Write only the document. No preamble, no explanation, no commentary.
-- Plain language. No UX jargon — write as if the reader has never worked 
-  with a designer before.
-- Before state and after state must feel like a real person's day — specific, 
-  not abstract.
-- Core flow: 4 to 6 steps. Each step has exactly 4 lines in this order:
-    Action: one sentence starting with a verb — what the user does
-    Feeling: the emotion the user likely has at this moment — one sentence
-    Risk: what breaks down here if the design gets it wrong — one sentence
-    Status: one of three values only — Exists / Needs building / Undefined
-- "What to design first" must come from q7 specifically.
-- Open questions surface real unresolved issues — not generic product questions.
-- Phase 2 must contain exactly 3 journey prompts. Each prompt must be 
-  self-contained, explicitly framed as a UX journey map, and written so the 
-  founder can paste it directly into Claude or ChatGPT with no modification.
-  The prompts should together produce a complete picture of the experience 
-  from start to finish that the founder can use to make design decisions.
-- Format Phase 1 and Phase 2 with clear headers so a founder can work through 
-  one without needing the other.`;
-
-/**
- * Replace placeholders in template with actual answers
- */
-export function fillTemplate(template: string, answers: Record<string, string>): string {
-  let filled = template;
-  for (let i = 1; i <= 7; i++) {
-    const placeholder = `<q${i}>`;
-    const answer = answers[`q${i}`] || "";
-    filled = filled.replace(new RegExp(placeholder, "g"), answer);
-  }
-  return filled;
+function buildAnswersBlock(a: Answers): string {
+  return [
+    "FOUNDER'S ANSWERS",
+    `1. The idea: ${answerOrNone(a.q1)}`,
+    `2. Who has the problem: ${answerOrNone(a.q2)}`,
+    `3. The pain point: ${answerOrNone(a.q3)}`,
+    `4. Their current workaround: ${answerOrNone(a.q4)}`,
+    `5. What the solution does: ${answerOrNone(a.q5)}`,
+    `6. What changes for them: ${answerOrNone(a.q6)}`,
+    `7. What the founder is most unsure about: ${answerOrNone(a.q7)}`,
+  ].join("\n");
 }
 
+function buildSummaryBlock(s: Summary): string {
+  return [
+    "PRODUCT SUMMARY",
+    `Name: ${s.productName}`,
+    `Pitch: ${s.pitch}`,
+    `Target user: ${s.targetUser}`,
+    `Problem: ${s.problem}`,
+    `Current workaround: ${s.currentWorkaround}`,
+    `Core outcome: ${s.coreOutcome}`,
+    `Riskiest assumption: ${s.riskiestAssumption}`,
+  ].join("\n");
+}
+
+const SUMMARY_FIELDS = [
+  "productName",
+  "pitch",
+  "targetUser",
+  "problem",
+  "currentWorkaround",
+  "coreOutcome",
+  "riskiestAssumption",
+] as const;
+
+const stringSchema = { type: SchemaType.STRING } as const;
+
+const summarySchema: ResponseSchema = {
+  type: SchemaType.OBJECT,
+  properties: Object.fromEntries(SUMMARY_FIELDS.map((field) => [field, stringSchema])),
+  required: [...SUMMARY_FIELDS],
+};
+
+function phaseSchema(stepCount: number): ResponseSchema {
+  return {
+    type: SchemaType.OBJECT,
+    properties: {
+      intro: stringSchema,
+      steps: {
+        type: SchemaType.ARRAY,
+        minItems: stepCount,
+        maxItems: stepCount,
+        items: {
+          type: SchemaType.OBJECT,
+          properties: {
+            goal: stringSchema,
+            todo: { type: SchemaType.ARRAY, maxItems: 3, items: stringSchema },
+            prompt: stringSchema,
+            tip: stringSchema,
+          },
+          required: ["goal", "todo", "prompt"],
+        },
+      },
+    },
+    required: ["intro", "steps"],
+  };
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error));
+
 /**
- * Call Google Gemini API to generate content with retry logic
+ * Call Gemini in JSON mode, retrying API errors with backoff (1s, 2s)
  */
-export async function generateWithGemini(
+async function callGemini(
   systemPrompt: string,
   userPrompt: string,
+  responseSchema: ResponseSchema,
   apiKey: string
 ): Promise<string> {
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({
+    model: MODEL_NAME,
+    systemInstruction: systemPrompt,
+    generationConfig: { responseMimeType: "application/json", responseSchema },
+  });
 
-  // Use gemini-2.5-flash-lite with 5 retries (6 total attempts)
-  const modelName = "gemini-2.5-flash-lite";
-  const maxRetries = 5;
-
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= MAX_API_ATTEMPTS; attempt++) {
     try {
-      console.log(`Attempt ${attempt + 1}/${maxRetries + 1} with model: ${modelName}`);
-
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        systemInstruction: systemPrompt,
-      });
-
       const result = await model.generateContent(userPrompt);
-      const response = result.response;
-      const text = response.text();
-
-      console.log(`✓ Success with ${modelName} on attempt ${attempt + 1}`);
-      return text;
-    } catch (error: any) {
-      console.log(`✗ Attempt ${attempt + 1} failed with ${modelName}:`, error.message);
-
-      // If it's the last retry, throw error
-      if (attempt === maxRetries) {
-        console.error(`✗ All ${maxRetries + 1} attempts failed with ${modelName}`);
-        throw new Error(`Failed after ${maxRetries + 1} attempts. Last error: ${error.message}`);
-      }
-
-      // Wait before retrying (exponential backoff: 1s, 2s, 4s, 8s, 16s)
-      const waitTime = Math.pow(2, attempt) * 1000;
-      console.log(`Waiting ${waitTime}ms before retry...`);
-      await new Promise(resolve => setTimeout(resolve, waitTime));
+      return result.response.text();
+    } catch (error) {
+      lastError = error;
+      console.log(`✗ Gemini attempt ${attempt}/${MAX_API_ATTEMPTS} failed:`, errorMessage(error));
+      if (attempt < MAX_API_ATTEMPTS) await sleep(1000 * Math.pow(2, attempt - 1));
     }
   }
+  throw new Error(`Gemini failed after ${MAX_API_ATTEMPTS} attempts: ${errorMessage(lastError)}`);
+}
 
-  // This should never be reached, but TypeScript needs it
-  throw new Error("Unexpected error in generateWithGemini");
+// Output checks. "hard" issues fail the kit after one regeneration; "soft" issues are sanitized with a warning.
+type CheckResult<T> = { value?: T; hard: string[]; soft: string[] };
+
+const FORBIDDEN_CHARS = /[[\]{}<>`]/;
+const FORBIDDEN_CHARS_ALL = /[[\]{}<>`]/g;
+const YEAR_OR_PRICE = /\b(19|20)\d{2}\b|[$€£]\s?\d/;
+
+const isRecord = (x: unknown): x is Record<string, unknown> =>
+  typeof x === "object" && x !== null && !Array.isArray(x);
+const asText = (x: unknown) => (typeof x === "string" ? x.trim() : "");
+const strip = (text: string) => text.replace(FORBIDDEN_CHARS_ALL, "").replace(/ {2,}/g, " ").trim();
+
+function parseJson(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return undefined;
+  }
+}
+
+function checkText(label: string, text: string, soft: string[]) {
+  if (FORBIDDEN_CHARS.test(text)) soft.push(`${label}: contains brackets, braces or backticks`);
+  if (YEAR_OR_PRICE.test(text)) soft.push(`${label}: may mention a year or price`);
+}
+
+function checkSummary(raw: unknown): CheckResult<Summary> {
+  if (!isRecord(raw)) return { hard: ["summary: response is not a JSON object"], soft: [] };
+  const soft: string[] = [];
+  const value = {} as Summary;
+  for (const field of SUMMARY_FIELDS) {
+    const text = asText(raw[field]);
+    if (!text) soft.push(`summary.${field}: is empty`);
+    if (FORBIDDEN_CHARS.test(text)) soft.push(`summary.${field}: contains brackets, braces or backticks`);
+    value[field] = text;
+  }
+  return { value, hard: [], soft };
+}
+
+function sanitizeSummary(summary: Summary): Summary {
+  const value = {} as Summary;
+  for (const field of SUMMARY_FIELDS) value[field] = strip(summary[field]);
+  return value;
+}
+
+function checkPhase(key: PhaseKey, raw: unknown): CheckResult<Phase> {
+  const { titles, pasteInto } = PHASES[key];
+  if (!isRecord(raw) || !Array.isArray(raw.steps)) {
+    return { hard: [`${key}: response is not a phase object`], soft: [] };
+  }
+  if (raw.steps.length !== titles.length) {
+    return { hard: [`${key}: expected ${titles.length} steps, got ${raw.steps.length}`], soft: [] };
+  }
+
+  const hard: string[] = [];
+  const soft: string[] = [];
+  const intro = asText(raw.intro);
+  if (!intro) soft.push(`${key}.intro: is empty`);
+  checkText(`${key}.intro`, intro, soft);
+
+  const steps = raw.steps.map((rawStep, i) => {
+    const label = `${key} step ${i + 1}`;
+    const step = isRecord(rawStep) ? rawStep : {};
+    const goal = asText(step.goal);
+    const prompt = asText(step.prompt);
+    const todo = Array.isArray(step.todo) ? step.todo.map(asText).filter(Boolean) : [];
+    const tip = asText(step.tip);
+
+    if (!prompt) hard.push(`${label}: prompt is empty`);
+    if (!goal) soft.push(`${label}: goal is empty`);
+    if (todo.length === 0) soft.push(`${label}: todo list is empty`);
+    if (todo.length > 3) soft.push(`${label}: todo list has more than 3 lines`);
+    for (const text of [goal, prompt, tip, ...todo]) checkText(label, text, soft);
+
+    return { title: titles[i], goal, todo, prompt, pasteInto, ...(tip ? { tip } : {}) };
+  });
+
+  return { value: hard.length === 0 ? { intro, steps } : undefined, hard, soft: [...new Set(soft)] };
+}
+
+function sanitizePhase(phase: Phase): Phase {
+  return {
+    intro: strip(phase.intro),
+    steps: phase.steps.map((step) => ({
+      title: step.title,
+      goal: strip(step.goal),
+      todo: step.todo.slice(0, 3).map(strip),
+      prompt: strip(step.prompt),
+      pasteInto: step.pasteInto,
+      ...(step.tip ? { tip: strip(step.tip) } : {}),
+    })),
+  };
 }
 
 /**
- * Template definitions
+ * Generate, check, and on failure regenerate once. On the second failure,
+ * hard issues throw; soft issues are sanitized and returned as warnings.
  */
-export const Templates = {
-  VALIDATION: {
-    template: TEMPLATE_A,
-    system: SYSTEM_A,
-  },
-  VIBE_CODING: {
-    template: TEMPLATE_B,
-    system: SYSTEM_B,
-  },
-  UX_PLAYBOOK: {
-    template: TEMPLATE_C,
-    system: SYSTEM_C,
-  },
-} as const;
+async function generateChecked<T>(
+  label: string,
+  systemPrompt: string,
+  userPrompt: string,
+  responseSchema: ResponseSchema,
+  apiKey: string,
+  check: (raw: unknown) => CheckResult<T>,
+  sanitize: (value: T) => T
+): Promise<{ value: T; warnings: string[] }> {
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const raw = parseJson(await callGemini(systemPrompt, userPrompt, responseSchema, apiKey));
+    const result: CheckResult<T> =
+      raw === undefined ? { hard: [`${label}: response was not valid JSON`], soft: [] } : check(raw);
+
+    if (result.value !== undefined && result.hard.length === 0 && result.soft.length === 0) {
+      return { value: result.value, warnings: [] };
+    }
+    if (attempt === 1) {
+      console.log(`${label}: failed checks, regenerating once:`, [...result.hard, ...result.soft]);
+      continue;
+    }
+    if (result.value === undefined || result.hard.length > 0) {
+      throw new Error(result.hard.join("; "));
+    }
+    return {
+      value: sanitize(result.value),
+      warnings: result.soft.map((issue) => `${issue} (sanitized after one regeneration)`),
+    };
+  }
+  throw new Error(`${label}: generation did not complete`);
+}
+
+export async function generateSummary(answers: Answers, apiKey: string) {
+  return generateChecked(
+    "summary",
+    SUMMARY_SYSTEM,
+    buildAnswersBlock(answers),
+    summarySchema,
+    apiKey,
+    checkSummary,
+    sanitizeSummary
+  );
+}
+
+export async function generatePhase(key: PhaseKey, summary: Summary, answers: Answers, apiKey: string) {
+  return generateChecked(
+    key,
+    PHASES[key].system,
+    `${buildSummaryBlock(summary)}\n\n${buildAnswersBlock(answers)}`,
+    phaseSchema(PHASES[key].titles.length),
+    apiKey,
+    (raw) => checkPhase(key, raw),
+    sanitizePhase
+  );
+}
+

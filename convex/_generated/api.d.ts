@@ -8,13 +8,12 @@
  * @module
  */
 
-import type * as documentGeneration from "../documentGeneration.js";
 import type * as documents from "../documents.js";
 import type * as email from "../email.js";
 import type * as gemini from "../gemini.js";
+import type * as kits from "../kits.js";
 import type * as storage from "../storage.js";
 import type * as submissions from "../submissions.js";
-import type * as testDocGeneration from "../testDocGeneration.js";
 
 import type {
   ApiFromModules,
@@ -23,13 +22,12 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  documentGeneration: typeof documentGeneration;
   documents: typeof documents;
   email: typeof email;
   gemini: typeof gemini;
+  kits: typeof kits;
   storage: typeof storage;
   submissions: typeof submissions;
-  testDocGeneration: typeof testDocGeneration;
 }>;
 
 /**
