@@ -1,0 +1,208 @@
+{
+  "answers": {
+    "q1": "Something for restaurants",
+    "q2": "restaurant owners",
+    "q3": "staff scheduling is hard",
+    "q4": "",
+    "q5": "makes schedules",
+    "q6": "less stress",
+    "q7": "not sure"
+  },
+  "summary": {
+    "value": {
+      "productName": "Restaurant Scheduler",
+      "pitch": "Restaurant Scheduler helps restaurant owners make staff schedules without stress.",
+      "targetUser": "A restaurant owner who struggles with staff scheduling.",
+      "problem": "Making staff schedules is hard and stressful for restaurant owners.",
+      "currentWorkaround": "Restaurant owners currently make schedules manually, which is time-consuming and difficult.",
+      "coreOutcome": "Less stress for restaurant owners.",
+      "riskiestAssumption": "Restaurant owners want a tool to help them make staff schedules and will use it."
+    },
+    "warnings": []
+  },
+  "phases": [
+    {
+      "value": {
+        "intro": "This week, you will talk to real restaurant owners to learn if staff scheduling is as big a problem as you think. This will give you proof from real people before spending time or money.",
+        "steps": [
+          {
+            "title": "Recruit 5 people",
+            "goal": "Find 5 restaurant owners who struggle with staff scheduling for a 20-minute chat.",
+            "todo": [
+              "List 10 places to find restaurant owners.",
+              "Write a friendly outreach message.",
+              "Send messages to potential interviewees."
+            ],
+            "prompt": "I am building a product called Restaurant Scheduler to help restaurant owners make staff schedules without stress. The problem is that making staff schedules is hard and stressful for restaurant owners. Restaurant owners currently make schedules manually, which is time-consuming and difficult. My riskiest assumption is that restaurant owners want a tool to help them make staff schedules and will use it. Please list 10 specific online communities, job sites, or types of events where I can find restaurant owners who struggle with staff scheduling. Also, write a short, friendly outreach message I can use to ask for a 20-minute chat about their experience with staff scheduling. Do not pitch my product in the message.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Look for places where owners discuss operational challenges."
+          },
+          {
+            "title": "Interview script",
+            "goal": "Create a 20-minute interview script to understand their scheduling pain points.",
+            "todo": [
+              "Write a 20-minute interview script.",
+              "Include questions about past behavior.",
+              "Add questions for the riskiest assumption."
+            ],
+            "prompt": "I am building a product called Restaurant Scheduler to help restaurant owners make staff schedules without stress. The problem is that making staff schedules is hard and stressful for restaurant owners. The target user is a restaurant owner who struggles with staff scheduling. My riskiest assumption is that restaurant owners want a tool to help them make staff schedules and will use it. Please write a 20-minute interview script focused on understanding a restaurant owner's past behavior related to staff scheduling. The script should include questions about the last time the problem happened, what they did to solve it, what the workaround costs them (time, money, stress), and what they have already tried to make it easier. Include follow-up probes for deeper insights. Ensure at least two questions specifically test the riskiest assumption that they want a tool and will use it. The script must also include a closing question asking for referrals to other restaurant owners who face similar challenges. Do not ask if they would use or pay for a product.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Focus on past actions, not future desires."
+          },
+          {
+            "title": "Make sense of the notes",
+            "goal": "Analyze your interview notes to identify key insights about the problem.",
+            "todo": [
+              "Paste interview notes below this prompt.",
+              "Ask AI to identify recurring pains.",
+              "Ask AI to summarize workarounds and evidence."
+            ],
+            "prompt": "I am building a product called Restaurant Scheduler to help restaurant owners make staff schedules without stress. The problem is that making staff schedules is hard and stressful for restaurant owners. The target user is a restaurant owner who struggles with staff scheduling. My riskiest assumption is that restaurant owners want a tool to help them make staff schedules and will use it. Below are my interview notes from talking to 5 restaurant owners. Please analyze these notes and tell me: 1. What specific pains related to staff scheduling were mentioned by 3 or more people? 2. What workarounds are people actually using to make staff schedules? 3. What evidence did you find for and against my riskiest assumption (that owners want a tool and will use it)? 4. What are the 3 strongest direct quotes that capture the pain or workaround?\n\nPaste Interview Notes Here",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Look for patterns across multiple interviews."
+          },
+          {
+            "title": "Go / adjust / stop",
+            "goal": "Decide whether to proceed, adjust, or stop based on your findings.",
+            "todo": [
+              "Review the AI's analysis of your notes.",
+              "Make a go/adjust/stop decision.",
+              "Define your single next action."
+            ],
+            "prompt": "I am building a product called Restaurant Scheduler to help restaurant owners make staff schedules without stress. The problem is that making staff schedules is hard and stressful for restaurant owners. The target user is a restaurant owner who struggles with staff scheduling. My riskiest assumption is that restaurant owners want a tool to help them make staff schedules and will use it. Based on the following analysis from my interview notes, make a decision about whether to 'Go', 'Adjust', or 'Stop'. Use these rules: Go if 3 or more of the 5 owners described the pain without prompting and already use a workaround. Adjust if the pain is real but belongs to a different user or a different problem than initially thought. Stop if fewer than 2 owners described the pain. Provide a one-paragraph decision and state the single most important next action.\n\nAnalysis:\nPaste AI's analysis from Step 3 here",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Be honest about the data, even if it's not what you hoped for."
+          }
+        ]
+      },
+      "warnings": [
+        "validate step 3: contains brackets, braces or backticks (sanitized after one regeneration)",
+        "validate step 4: contains brackets, braces or backticks (sanitized after one regeneration)"
+      ]
+    },
+    {
+      "value": {
+        "intro": "This phase gets you a first version so small you can build it in days, focused on solving the biggest part of the problem.",
+        "steps": [
+          {
+            "title": "One-page brief",
+            "goal": "Get a clear one-page brief for your first version.",
+            "todo": [
+              "Write down the product name.",
+              "Describe the user and their problem.",
+              "List 3 features for the first version."
+            ],
+            "prompt": "Write a one-page brief for \"Restaurant Scheduler\". The target user is a restaurant owner who struggles with staff scheduling. The problem is that making staff schedules is hard and stressful. The core outcome is less stress for the owner. The first version should focus on the core need and include at most 3 features. Assume the current workaround is making schedules manually. Exclude features like payroll integration or time-off requests. The brief should also explain how the founder will know the first version works, like seeing owners save time. Assume the founder is unsure about the riskiest assumption and wants to test if restaurant owners will use a scheduling tool.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Make sure the brief clearly states what's NOT in the first version."
+          },
+          {
+            "title": "Journey map",
+            "goal": "Map out the user's journey today and with your product.",
+            "todo": [
+              "Describe the current manual scheduling process.",
+              "Describe the scheduling process with Restaurant Scheduler.",
+              "Identify where time, money, or patience is lost."
+            ],
+            "prompt": "Map the user journey for \"Restaurant Scheduler\". The target user is a restaurant owner who struggles with staff scheduling because it's hard and stressful. Assume their current workaround is making schedules manually. The product helps them make staff schedules easily to reduce stress. Detail the steps a restaurant owner takes today to create a weekly schedule manually. Then, detail the steps they would take using Restaurant Scheduler to create the same schedule. For each step in both journeys, identify where time, money, or patience is lost. Assume the manual process involves writing down availability, creating shifts, and then writing the final schedule on paper or a spreadsheet.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Focus on the painful parts of the current workaround."
+          },
+          {
+            "title": "Find the friction",
+            "goal": "Identify the biggest friction points and simplify your product.",
+            "todo": [
+              "List the top 3 friction points.",
+              "Choose the single biggest friction point.",
+              "Define the smallest product to fix it."
+            ],
+            "prompt": "Review the user journey map for \"Restaurant Scheduler\". The target user is a restaurant owner who struggles with staff scheduling. The problem is that making schedules is hard and stressful, and the current workaround is manual. The product aims to reduce this stress by making scheduling easy. Identify the 3 moments in the journey where the restaurant owner is most likely to get stuck, confused, or give up. Then, recommend the absolute smallest product change or feature that removes the biggest of these friction points. Everything else that isn't essential to fixing that one biggest friction point should be cut from the first version. Assume the biggest friction point identified is the complexity of assigning shifts based on staff availability and desired hours.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Be ruthless. Cut everything that doesn't directly address the main friction."
+          },
+          {
+            "title": "Key screens",
+            "goal": "Define the essential screens for your first version.",
+            "todo": [
+              "Name each screen.",
+              "Describe the purpose of each screen.",
+              "List what is on each screen and the main action."
+            ],
+            "prompt": "Describe 3 to 5 key screens for the first version of \"Restaurant Scheduler\". The target user is a restaurant owner struggling with stressful, manual staff scheduling. The product's purpose is to make scheduling easy and reduce stress. The first version must focus on fixing the biggest friction point identified (e.g., assigning shifts based on availability and desired hours). For each screen, provide its name, its main purpose, what specific information or controls are on it, and the single most important action the user should take on that screen. Assume the user needs to input staff availability and desired hours before assigning shifts.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Focus on the core task. If a screen isn't vital, leave it out."
+          }
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "value": {
+        "intro": "This phase builds your first clickable version, piece by piece. You'll paste one prompt at a time into your app builder. At the end, you'll have a working app to show your interviewees.",
+        "steps": [
+          {
+            "title": "Jump-start",
+            "goal": "Create the basic structure of your app with key screens and sample data.",
+            "todo": [
+              "Create the project with the app name and purpose.",
+              "Define the main screens for the app.",
+              "Add realistic sample data for restaurant owners."
+            ],
+            "prompt": "Create a new app called Restaurant Scheduler. This app helps restaurant owners make staff schedules without stress. The target user is a restaurant owner who struggles with staff scheduling. The main problem is that making staff schedules is hard and stressful. The current workaround is making schedules manually. The core outcome is less stress for restaurant owners. Assume the main user is a solo restaurant owner who manages a small team. \n\nBuild 3 screens: \n1.  **Staff List**: Shows a list of all staff members with their names and roles. \n2.  **Schedule View**: Shows the weekly schedule for all staff, with days of the week across the top and staff names down the side. \n3.  **Add Shift**: A form to add a new work shift for a staff member, including staff name, day, and time. \n\nUse a clean and simple design. Include realistic sample data for 5 staff members (e.g., 'Alice - Server', 'Bob - Cook') and a few sample shifts for the Schedule View.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
+            "tip": "This sets up the foundation for your app."
+          },
+          {
+            "title": "Core flow",
+            "goal": "Make the core task of adding a shift work smoothly.",
+            "todo": [
+              "Connect the 'Add Shift' form to the 'Schedule View'.",
+              "Ensure new shifts appear on the schedule.",
+              "Keep the data saved between sessions."
+            ],
+            "prompt": "In the Restaurant Scheduler app, connect the 'Add Shift' form to the 'Schedule View'. When a user fills out the 'Add Shift' form and saves it, the new shift should immediately appear on the 'Schedule View' for the correct staff member and day. Ensure that any shifts added are saved so they are visible the next time the user opens the app. The app is for a restaurant owner who struggles with staff scheduling, aiming to reduce their stress by making scheduling easier. The screens are Staff List, Schedule View, and Add Shift.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
+            "tip": "This makes the main feature usable."
+          },
+          {
+            "title": "Outcome screen",
+            "goal": "Create a screen that clearly shows the completed schedule.",
+            "todo": [
+              "Design the 'Schedule View' for clarity.",
+              "Ensure the schedule is easy to read.",
+              "Make sure users understand it quickly."
+            ],
+            "prompt": "For the Restaurant Scheduler app, enhance the 'Schedule View' screen. The goal is for a restaurant owner to understand their staff schedule at a glance, recognizing their result within five seconds. Make sure the weekly schedule is clearly laid out, showing each staff member's assigned shifts for each day. The app helps restaurant owners reduce stress from staff scheduling. The screens are Staff List, Schedule View, and Add Shift.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
+            "tip": "Focus on making the result obvious."
+          },
+          {
+            "title": "Polish",
+            "goal": "Improve the app's usability with helpful messages and a mobile-friendly layout.",
+            "todo": [
+              "Add empty states for when there are no shifts.",
+              "Show a loading message when data is saving.",
+              "Make button labels clear and direct."
+            ],
+            "prompt": "Refine the Restaurant Scheduler app. Add helpful states for common situations. If there are no shifts scheduled yet on the 'Schedule View', display a friendly message like 'No shifts added yet. Click the Add Shift button to get started!'. When a shift is being saved from the 'Add Shift' form, show a brief loading message. Ensure the app's layout works well on a phone screen. Make all button labels clear, for example, use 'Add New Shift' instead of just 'Save'. The app helps restaurant owners manage staff scheduling more easily and reduce stress.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
+            "tip": "Anticipate user needs and common issues."
+          },
+          {
+            "title": "Ready to test",
+            "goal": "Prepare the app for user testing with a welcome message and feedback option.",
+            "todo": [
+              "Add a welcome message explaining the app.",
+              "Include a simple feedback form.",
+              "Check the main scheduling flow works."
+            ],
+            "prompt": "Finalize the Restaurant Scheduler app for testing. Add a short welcome message when the app first opens that explains it helps restaurant owners create staff schedules easily and reduce stress. Include a simple way for users to provide feedback, perhaps a 'Send Feedback' button that opens a basic form asking 'What did you think?' and a text box for comments. Double-check that the core flow of adding a shift and seeing it on the schedule works correctly. The app is for restaurant owners who find staff scheduling difficult.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
+            "tip": "Get ready to observe your first users."
+          }
+        ]
+      },
+      "warnings": []
+    }
+  ]
+}

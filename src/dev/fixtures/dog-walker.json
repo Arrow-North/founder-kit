@@ -1,0 +1,198 @@
+{
+  "answers": {
+    "q1": "An app that helps independent dog walkers manage bookings and payments",
+    "q2": "Solo dog walkers with 10-30 regular clients",
+    "q3": "They lose hours every week texting clients to confirm times and chasing late payments",
+    "q4": "Text messages, a paper calendar, and Venmo requests",
+    "q5": "Clients book and pay in one place, and walkers see their week at a glance",
+    "q6": "They get their evenings back and stop losing money to missed payments",
+    "q7": "Whether clients will actually switch from texting"
+  },
+  "summary": {
+    "value": {
+      "productName": "Dog Walker Manager",
+      "pitch": "Dog Walker Manager helps solo dog walkers get paid on time without chasing clients.",
+      "targetUser": "Solo dog walkers with 10-30 regular clients who spend hours texting and chasing payments.",
+      "problem": "You lose hours every week texting clients to confirm times and chasing late payments.",
+      "currentWorkaround": "You use text messages, a paper calendar, and Venmo requests to manage bookings and payments.",
+      "coreOutcome": "You get your evenings back and stop losing money to missed payments.",
+      "riskiestAssumption": "Clients will switch from texting to using your app for booking and payment."
+    },
+    "warnings": []
+  },
+  "phases": [
+    {
+      "value": {
+        "intro": "This week, we'll talk to real dog walkers to see if the problem you're trying to solve is a big deal. This will help you learn before you build anything.",
+        "steps": [
+          {
+            "title": "Recruit 5 people",
+            "goal": "Find 5 dog walkers who have the problem you're solving for a 20-minute chat.",
+            "todo": [
+              "List 10 places to find solo dog walkers.",
+              "Write a friendly outreach message.",
+              "Ask for a 20-minute chat about their booking and payment challenges."
+            ],
+            "prompt": "I'm building an app called Dog Walker Manager to help solo dog walkers get paid on time. My target user is a solo dog walker with 10-30 regular clients who spends hours texting and chasing payments. The problem is that they lose hours every week texting clients to confirm times and chasing late payments. Their current workaround involves text messages, a paper calendar, and Venmo requests. The core outcome is getting their evenings back and stopping lost money from missed payments. My riskiest assumption is that clients will switch from texting to using the app for booking and payment.\n\nPlease list 10 specific online and offline communities, groups, job sites, or events where I can find these solo dog walkers. Also, write a short, friendly outreach message I can use to invite them to a 20-minute chat about their booking and payment challenges. The message must not pitch my product.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Look for active communities where dog walkers ask for advice."
+          },
+          {
+            "title": "Interview script",
+            "goal": "Understand how dog walkers currently handle bookings and payments.",
+            "todo": [
+              "Create a 20-minute interview script.",
+              "Focus on past behaviors, not future predictions.",
+              "Include questions about their riskiest assumption."
+            ],
+            "prompt": "I'm preparing for a 20-minute interview with solo dog walkers. My product is called Dog Walker Manager, and it aims to help them get paid on time without chasing clients. The target user is a solo dog walker with 10-30 regular clients who currently spends hours texting and chasing payments. The main pain point is losing hours weekly on confirmations and late payments, with current workarounds including text messages, paper calendars, and Venmo requests.\n\nPlease write a 20-minute interview script. The script should explore their past behaviors regarding managing bookings and payments. Include questions about:\n- The last time the problem of managing bookings or chasing payments happened.\n- What specific actions they took to resolve it.\n- What the workaround cost them in time or money.\n- What solutions they have already tried.\n- At least two follow-up questions to test the riskiest assumption: 'Clients will switch from texting to using your app for booking and payment.'\n- A closing question asking for referrals to other dog walkers facing similar issues.\n\nThe script must not ask if they would use or pay for the product.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Ask"
+          },
+          {
+            "title": "Make sense of the notes",
+            "goal": "Identify the biggest pains and validate your riskiest assumption.",
+            "todo": [
+              "Paste your interview notes below.",
+              "Ask the AI to identify recurring pains.",
+              "Ask the AI to assess your riskiest assumption."
+            ],
+            "prompt": "I'm building an app called Dog Walker Manager to help solo dog walkers get paid on time without chasing clients. The target user is a solo dog walker with 10-30 regular clients who spends hours texting and chasing payments. The problem is that they lose hours every week texting clients to confirm times and chasing late payments.\n\nHere are my interview notes:\n\nPASTE INTERVIEW NOTES HERE\n\nPlease analyze these notes and provide:\n- The top 3 recurring pains dog walkers mentioned related to managing bookings and payments.\n- The actual workarounds people are currently using.\n- Evidence from the notes that supports and refutes my riskiest assumption: 'Clients will switch from texting to using your app for booking and payment.'\n- The 3 strongest direct quotes that illustrate the problem or their current situation.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Look for patterns in the problems and solutions discussed."
+          },
+          {
+            "title": "Go / adjust / stop",
+            "goal": "Decide whether to proceed, adjust your idea, or stop.",
+            "todo": [
+              "Review the AI's analysis of your notes.",
+              "Make a clear go, adjust, or stop decision.",
+              "Define your single next action based on the decision."
+            ],
+            "prompt": "I'm building an app called Dog Walker Manager to help solo dog walkers get paid on time without chasing clients. The target user is a solo dog walker with 10-30 regular clients who spends hours texting and chasing payments. The problem is that they lose hours every week texting clients to confirm times and chasing late payments. My riskiest assumption is that clients will switch from texting to using the app for booking and payment.\n\nBased on the interview analysis, please make a decision about whether to proceed, adjust, or stop. Use these rules:\n- Go: 3 or more of the 5 interviewed dog walkers described the pain without prompting and already use a workaround.\n- Adjust: The pain is real but belongs to a different user or a different problem.\n- Stop: Fewer than 2 described the pain.\n\nProvide a one-paragraph decision and state the single, concrete next action to take.",
+            "pasteInto": "ChatGPT or Claude",
+            "tip": "Your next step should be concrete and actionable."
+          }
+        ]
+      },
+      "warnings": [
+        "validate step 3: contains brackets, braces or backticks (sanitized after one regeneration)"
+      ]
+    },
+    {
+      "value": {
+        "intro": "This phase focuses on defining the smallest possible first version of your Dog Walker Manager app. The goal is to create a plan for a product that can be built quickly and addresses the core pain points of solo dog walkers.",
+        "steps": [
+          {
+            "title": "One-page brief",
+            "goal": "Create a concise one-page brief that defines the core elements of your Dog Walker Manager.",
+            "todo": [
+              "Define the target user for Dog Walker Manager.",
+              "Clarify the primary problem Dog Walker Manager solves.",
+              "List the essential features for the first version."
+            ],
+            "prompt": "You are a product designer helping a founder create a one-page brief for a new app called Dog Walker Manager. The app is for solo dog walkers with 10-30 regular clients who currently spend hours texting clients to confirm times and chasing late payments. Their current workaround involves using text messages, a paper calendar, and Venmo requests. The core outcome for these users is getting their evenings back and stopping money lost to missed payments. The founder is unsure if clients will switch from texting to using the app for booking and payment.\n\nWrite a one-page brief for Dog Walker Manager. Include:\n1.  **Who it is for:** Be specific about the target user.\n2.  **The problem:** Clearly state the pain point.\n3.  **The outcome:** Describe the main benefit for the user.\n4.  **What is in the first version:** List at most 3 essential features that directly address the problem.\n5.  **What is deliberately left out:** Mention features not included in the first version to keep it small.\n6.  **How you will know it works:** Define a clear, measurable success metric for the first version.",
+            "pasteInto": "ChatGPT or Claude"
+          },
+          {
+            "title": "Journey map",
+            "goal": "Map out the user's current journey and their journey with Dog Walker Manager.",
+            "todo": [
+              "Describe the current process for booking and payment.",
+              "Outline the ideal process using Dog Walker Manager.",
+              "Identify where time, money, or patience is lost."
+            ],
+            "prompt": "You are a product designer creating a user journey map for Dog Walker Manager. The app is for solo dog walkers with 10-30 regular clients who spend hours texting clients to confirm times and chasing late payments. Their current workaround involves using text messages, a paper calendar, and Venmo requests. The core outcome is getting evenings back and stopping money lost to missed payments. The founder is unsure if clients will switch from texting.\n\nMap the user journey for Dog Walker Manager in two columns:\n1.  **Today's Workaround:** Detail the step-by-step process a dog walker currently uses to manage bookings and payments with clients (using texts, paper calendar, Venmo). Mark where time, money, or patience is lost.\n2.  **With Dog Walker Manager:** Detail the step-by-step process a dog walker and their clients would use with the first version of the app. Assume the first version includes client booking and payment features. Mark where time, money, or patience is saved or lost.",
+            "pasteInto": "ChatGPT or Claude"
+          },
+          {
+            "title": "Find the friction",
+            "goal": "Identify the biggest friction points and define the smallest viable product.",
+            "todo": [
+              "Pinpoint the 3 most frustrating steps in the user journey.",
+              "Determine the single biggest friction point.",
+              "Define the smallest product to fix that one friction point."
+            ],
+            "prompt": "You are a product designer analyzing a user journey map for Dog Walker Manager. The app is for solo dog walkers with 10-30 regular clients who spend hours texting clients to confirm times and chasing late payments. Their current workaround involves using text messages, a paper calendar, and Venmo requests. The core outcome is getting evenings back and stopping money lost to missed payments. The founder is unsure if clients will switch from texting. The first version of the app should focus on client booking and payment.\n\nReview the user journey map (assume it has been provided or generated previously) for Dog Walker Manager. Identify:\n1.  **The 3 moments** where users (both walkers and clients) are most likely to get stuck, confused, or give up.\n2.  **The single biggest friction point** among those three.\n3.  **The smallest product feature** that directly removes this biggest friction point for the dog walker. State this feature clearly and specify that everything else from the original plan is deliberately cut for the first version.",
+            "pasteInto": "ChatGPT or Claude"
+          },
+          {
+            "title": "Key screens",
+            "goal": "Describe the key screens needed for the minimal Dog Walker Manager product.",
+            "todo": [
+              "Name each essential screen.",
+              "Explain the purpose of each screen.",
+              "List the main action for each screen."
+            ],
+            "prompt": "You are a product designer creating a list of key screens for the first version of Dog Walker Manager. The app is for solo dog walkers with 10-30 regular clients who spend hours texting clients to confirm times and chasing late payments. The core outcome is getting evenings back and stopping money lost to missed payments. The riskiest assumption is that clients will switch from texting to using the app. The smallest viable product focuses on fixing the biggest friction point, which is assumed to be streamlining the booking and payment process to reduce manual texting and chasing payments. Assume the main user is a solo dog walker.\n\nDescribe 3 to 5 key screens for the first version of Dog Walker Manager. For each screen, include:\n1.  **Screen Name:** A clear, simple name for the screen.\n2.  **Purpose:** What the screen is for and what problem it solves for the user.\n3.  **What is on it:** List the essential elements and information visible on the screen.\n4.  **Main Action:** The single most important thing the user should do on this screen.",
+            "pasteInto": "ChatGPT or Claude"
+          }
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "value": {
+        "intro": "This phase creates a working version of your Dog Walker Manager app. You'll add features one by one, making it clickable so you can test it with real users.",
+        "steps": [
+          {
+            "title": "Jump-start",
+            "goal": "Set up your app with its basic structure and design.",
+            "todo": [
+              "Create the app's main screens.",
+              "Set a clean and simple visual style.",
+              "Add sample data for testing."
+            ],
+            "prompt": "Create a Dog Walker Manager app for solo dog walkers with 10-30 regular clients. The app helps them manage bookings and payments, getting their evenings back and stopping missed payments. The app should have three screens: 1. A 'Dashboard' screen showing a summary of the upcoming week's walks. 2. A 'Bookings' screen listing all confirmed walks. 3. A 'Clients' screen showing a list of clients. Use a clean, simple design. Include realistic sample data for 3 clients and 5 upcoming walks, showing client names, dates, times, and services.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)"
+          },
+          {
+            "title": "Core flow",
+            "goal": "Build the core flow for booking a new dog walk.",
+            "todo": [
+              "Allow adding a new walk from the Dashboard.",
+              "Save the new walk details.",
+              "Update the Dashboard and Bookings screens."
+            ],
+            "prompt": "In the Dog Walker Manager app, enable a user to add a new dog walk. From the Dashboard screen, add a button to 'Add New Walk'. This should lead to a form where the walker can select a client, choose a date and time, and specify the service (e.g., '30-min walk', 'Full day care'). After submitting the form, the new walk should be saved and appear on both the Dashboard (if it's in the upcoming week) and the Bookings screen. Use the existing sample data for clients.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)"
+          },
+          {
+            "title": "Outcome screen",
+            "goal": "Create a screen to show clients their upcoming walks and total cost.",
+            "todo": [
+              "Add a way to view a client's details.",
+              "Display upcoming walks for a selected client.",
+              "Show the total cost for those walks."
+            ],
+            "prompt": "In the Dog Walker Manager app, enhance the 'Clients' screen. When a user taps on a client's name from the Clients list, they should be taken to a new 'Client Details' screen. This screen should display the client's contact information and a list of their upcoming walks. For each upcoming walk, show the date, time, and service. At the bottom of the list, display the total cost for all upcoming walks for that specific client. Use the existing sample data.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)"
+          },
+          {
+            "title": "Polish",
+            "goal": "Improve the app's usability with helpful states and clear labels.",
+            "todo": [
+              "Show a message when there are no upcoming walks.",
+              "Display a loading message during data updates.",
+              "Clarify button and label text."
+            ],
+            "prompt": "In the Dog Walker Manager app, refine the user experience. On the Dashboard and Bookings screens, if there are no upcoming walks, display a friendly message like 'No walks scheduled yet!'. When a user adds a new walk, show a brief 'Saving walk...' message. Ensure all buttons have clear, action-oriented labels like 'Save Walk' or 'Add Client'. Make sure the layout looks good on a phone screen.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)"
+          },
+          {
+            "title": "Ready to test",
+            "goal": "Prepare the app for user testing with a welcome message and feedback option.",
+            "todo": [
+              "Add a brief welcome message.",
+              "Include a simple way to give feedback.",
+              "Review the main booking flow."
+            ],
+            "prompt": "For the Dog Walker Manager app, add a welcome screen that briefly explains: 'Dog Walker Manager helps you manage bookings and get paid faster. Book walks and view client details easily.' Also, add a 'Feedback' button, perhaps on the Dashboard, that opens a simple form with a text area labeled 'Your Feedback:' and a 'Send Feedback' button. This is the final version for testing. Ensure the core flow of adding a walk and viewing client details works smoothly.",
+            "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)"
+          }
+        ]
+      },
+      "warnings": []
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import { api } from '../convex/_generated/api';
 import { QuestionScreen, Question } from './components/QuestionScreen';
 import { EmailCaptureScreen } from './components/EmailCaptureScreen';
 import { LoadingScreen } from './components/LoadingScreen';
-import { ResultsScreen } from './components/ResultsScreen';
+import { navigate } from './router';
 
 const QUESTIONS: Question[] = [
 {
@@ -82,15 +82,11 @@ type ScreenState =
 'q6' |
 'q7' |
 'email' |
-'loading' |
-'results';
+'loading';
 
 export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenState>('q1');
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [email, setEmail] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
 
   // Saves the submission and starts kit generation on the server
   const startKit = useAction(api.kits.startKit);
@@ -116,10 +112,6 @@ export function App() {
   };
 
   const handleEmailSubmit = async (submittedEmail: string, submittedFirstName: string, submittedLastName: string) => {
-    setEmail(submittedEmail);
-    setFirstName(submittedFirstName);
-    setLastName(submittedLastName);
-
     // Move to loading screen immediately
     setCurrentScreen('loading');
 
@@ -143,22 +135,11 @@ export function App() {
         answers: answersData,
       });
       console.log('✓ Kit started:', kitId);
+      navigate(`/kit/${kitId}`);
     } catch (error) {
       console.error('❌ Error starting kit:', error);
       alert('There was an error starting your kit. Please try again in a moment.');
     }
-  };
-
-  const handleLoadingComplete = () => {
-    setCurrentScreen('results');
-  };
-
-  const handleStartOver = () => {
-    setAnswers({});
-    setEmail('');
-    setFirstName('');
-    setLastName('');
-    setCurrentScreen('q1');
   };
 
   const renderScreen = () => {
@@ -181,9 +162,7 @@ export function App() {
       case 'email':
         return <EmailCaptureScreen onSubmit={handleEmailSubmit} />;
       case 'loading':
-        return <LoadingScreen onComplete={handleLoadingComplete} />;
-      case 'results':
-        return <ResultsScreen onStartOver={handleStartOver} userId={email} answers={answers} />;
+        return <LoadingScreen />;
       default:
         return null;
     }

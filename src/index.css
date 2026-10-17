@@ -26,3 +26,19 @@ body {
   justify-content: center;
   min-height: 100vh;
 }
+
+/* Kit page "Save as PDF": light background, all phases shown */
+@page {
+  margin: 16mm 14mm;
+}
+
+@media print {
+  body {
+    background-color: #ffffff;
+  }
+
+  #root {
+    display: block;
+    min-height: 0;
+  }
+}
