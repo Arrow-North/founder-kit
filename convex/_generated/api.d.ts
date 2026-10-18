@@ -8,7 +8,6 @@
  * @module
  */
 
-import type * as documents from "../documents.js";
 import type * as email from "../email.js";
 import type * as gemini from "../gemini.js";
 import type * as kits from "../kits.js";
@@ -21,7 +20,6 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  documents: typeof documents;
   email: typeof email;
   gemini: typeof gemini;
   kits: typeof kits;

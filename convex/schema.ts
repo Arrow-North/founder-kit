@@ -32,6 +32,12 @@ export const phasesValidator = v.object({
   build: phaseValidator,
 });
 
+export const emailStatusValidator = v.union(
+  v.literal("sent"),
+  v.literal("skipped"),
+  v.literal("failed")
+);
+
 export default defineSchema({
   submissions: defineTable({
     // User information
@@ -68,9 +74,13 @@ export default defineSchema({
     error: v.optional(v.string()),
     // Issues sanitized after one regeneration
     warnings: v.optional(v.array(v.string())),
+    // Kit-ready email outcome; a failed email never fails the kit
+    emailStatus: v.optional(emailStatusValidator),
+    emailError: v.optional(v.string()),
     createdAt: v.number(),
   }).index("by_kitId", ["kitId"]),
 
+  // Legacy: files from the old document flow, kept for existing data
   userDocuments: defineTable({
     // User identifier (could be submission ID or email)
     userId: v.string(),

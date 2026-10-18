@@ -3,12 +3,13 @@
  * in a scheduled internal action, and the kit page reads it by kitId.
  */
 
-import { v } from "convex/values";
+import { Infer, v } from "convex/values";
 import { action, internalAction, internalMutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
-import { phasesValidator, summaryValidator } from "./schema";
+import { emailStatusValidator, phasesValidator, summaryValidator } from "./schema";
 import { answersValidator, insertSubmission, submissionArgs } from "./submissions";
 import { generatePhase, generateSummary, PHASE_KEYS } from "./gemini";
+import { sendKitEmail } from "./email";
 
 const KIT_ID_LENGTH = 22;
 const KIT_ID_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -59,11 +60,17 @@ export const createKit = internalMutation({
 });
 
 /**
- * 4 Gemini calls: the summary first, then Validate, Design and Build in parallel
+ * 4 Gemini calls: the summary first, then Validate, Design and Build in parallel.
+ * Once the kit is ready, one email is sent; its outcome never changes the kit status.
  */
 export const generateKit = internalAction({
   args: { kitId: v.string(), answers: answersValidator },
   handler: async (ctx, args) => {
+    let ready: {
+      recipient: { email: string; firstName: string };
+      summary: Infer<typeof summaryValidator>;
+      phases: Infer<typeof phasesValidator>;
+    } | null = null;
     try {
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey) {
@@ -81,17 +88,41 @@ export const generateKit = internalAction({
         ...build.warnings,
       ];
 
-      await ctx.runMutation(internal.kits.saveKitResult, {
-        kitId: args.kitId,
-        summary: summary.value,
-        phases: { validate: validate.value, design: design.value, build: build.value },
-        ...(warnings.length > 0 ? { warnings } : {}),
-      });
+      const phases = { validate: validate.value, design: design.value, build: build.value };
+      const recipient: { email: string; firstName: string } = await ctx.runMutation(
+        internal.kits.saveKitResult,
+        {
+          kitId: args.kitId,
+          summary: summary.value,
+          phases,
+          ...(warnings.length > 0 ? { warnings } : {}),
+        }
+      );
+      ready = { recipient, summary: summary.value, phases };
       console.log(`✓ Kit ${args.kitId} ready${warnings.length ? ` with ${warnings.length} warning(s)` : ""}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error(`✗ Kit ${args.kitId} failed:`, message);
       await ctx.runMutation(internal.kits.markKitFailed, { kitId: args.kitId, error: message });
+    }
+
+    if (ready) {
+      const result = await sendKitEmail(ready.recipient.email, {
+        firstName: ready.recipient.firstName,
+        productName: ready.summary.productName,
+        pitch: ready.summary.pitch,
+        kitId: args.kitId,
+        stepCounts: {
+          validate: ready.phases.validate.steps.length,
+          design: ready.phases.design.steps.length,
+          build: ready.phases.build.steps.length,
+        },
+      });
+      try {
+        await ctx.runMutation(internal.kits.recordEmailStatus, { kitId: args.kitId, ...result });
+      } catch (error) {
+        console.error(`Kit ${args.kitId}: could not record email status:`, error);
+      }
     }
     return null;
   },
@@ -116,6 +147,25 @@ export const saveKitResult = internalMutation({
       phases: args.phases,
       warnings: args.warnings,
     });
+    const submission = await ctx.db.get(kit.submissionId);
+    if (!submission) throw new Error(`Submission for kit ${args.kitId} not found`);
+    return { email: submission.email, firstName: submission.firstName };
+  },
+});
+
+export const recordEmailStatus = internalMutation({
+  args: {
+    kitId: v.string(),
+    emailStatus: emailStatusValidator,
+    emailError: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const kit = await ctx.db
+      .query("kits")
+      .withIndex("by_kitId", (q) => q.eq("kitId", args.kitId))
+      .unique();
+    if (!kit) throw new Error(`Kit ${args.kitId} not found`);
+    await ctx.db.patch(kit._id, { emailStatus: args.emailStatus, emailError: args.emailError });
     return null;
   },
 });

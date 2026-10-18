@@ -118,25 +118,6 @@ await convex.action(api.documentGeneration.generateAllDocuments, {
 });
 ```
 
-### Retrieve Documents
-
-```typescript
-// Get all documents for a user
-const docs = await convex.query(api.documents.getUserDocuments, {
-  userId: "user@example.com"
-});
-
-// Get download URLs
-const urls = await convex.query(api.documents.getUserDocumentUrls, {
-  userId: "user@example.com"
-});
-
-// Check if all documents are generated
-const status = await convex.query(api.documents.checkDocumentsComplete, {
-  userId: "user@example.com"
-});
-```
-
 ## Integrating with Your App
 
 Update `App.tsx` to call the document generation after submission:
