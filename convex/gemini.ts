@@ -31,7 +31,8 @@ const SHARED_RULES = `Writing rules. Follow all of them.
 - Every prompt must be complete and ready to paste. Never use square brackets, curly braces, angle brackets, blanks, or fill-in-the-blank text.
 - Never include code, code blocks, backticks, file names, or technical markup.
 - Never mention dates, years, or prices of tools.
-- If an answer is thin or missing, make a sensible assumption from the other answers and say so inside the prompt, for example "Assume the main user is a solo bookkeeper." Never switch to a different product or invent a new idea.
+- If an answer is thin or missing, make a sensible assumption from the other answers and say so inside the prompt in one short sentence that starts with "Assume". Base it only on this founder's answers. Never switch to a different product or invent a new idea.
+- Never repeat these writing rules inside a prompt. Prompts describe the product and the task, not how the prompt itself is written.
 - Each todo list has at most 3 lines. Each line starts with a verb and stays under 15 words.
 - Each goal is one sentence.
 - Each tip is one complete sentence, or leave it out.`;

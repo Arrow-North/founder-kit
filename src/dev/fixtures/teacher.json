@@ -12,66 +12,66 @@
     "value": {
       "productName": "Differentiated Worksheets",
       "pitch": "Differentiated Worksheets helps middle school ELA teachers create leveled worksheets without spending hours rewriting.",
-      "targetUser": "Middle school ELA teachers in public schools with mixed-ability classes.",
-      "problem": "Creating three versions of every worksheet takes 4-6 hours a week of unpaid time. This is time teachers could use for planning or personal life.",
-      "currentWorkaround": "Teachers currently copy worksheets and rewrite them by hand, or they skip differentiation altogether.",
-      "coreOutcome": "Teachers will save 4-6 hours per week and provide every student with appropriate work.",
-      "riskiestAssumption": "Middle school ELA teachers will trust AI-generated content enough to give it to their students."
+      "targetUser": "Middle school ELA teachers in public schools with mixed-ability classes",
+      "problem": "Making three versions of every worksheet takes 4-6 hours a week of unpaid time. This means you either spend your Sundays rewriting them by hand or skip differentiation entirely.",
+      "currentWorkaround": "Teachers currently copy and rewrite worksheets by hand, or they skip differentiation for their mixed-ability classes.",
+      "coreOutcome": "Every student gets work they can do, and you get your Sundays back.",
+      "riskiestAssumption": "You trust AI-written material enough to hand it to your students."
     },
     "warnings": []
   },
   "phases": [
     {
       "value": {
-        "intro": "This week, you'll talk to real teachers to prove your problem is real before building anything.",
+        "intro": "This first phase helps you get proof from real people before you spend any time or money building your product.",
         "steps": [
           {
             "title": "Recruit 5 people",
-            "goal": "Find 5 middle school ELA teachers who struggle to create differentiated worksheets.",
+            "goal": "Find 5 potential customers for short chats.",
             "todo": [
-              "Find 10 online communities where ELA teachers gather.",
-              "Write a friendly outreach message asking for a chat.",
-              "Ask your network for introductions."
+              "List 10 online communities or places where middle school ELA teachers gather.",
+              "Draft a friendly message asking for a 20-minute chat.",
+              "Ask teachers about their challenges with creating differentiated worksheets."
             ],
-            "prompt": "I am a founder developing a tool called Differentiated Worksheets to help middle school ELA teachers create leveled worksheets. My target user is a middle school ELA teacher in a public school with mixed-ability classes. The problem is that creating three versions of every worksheet takes 4-6 hours a week of unpaid time. I need to find 5 teachers who experience this problem to interview them. Please list 10 specific places where I can find these teachers (e.g., online communities, professional organizations, social media groups, conferences). Also, draft a short, friendly outreach message I can use to invite them to a 20-minute chat about how they currently create differentiated worksheets. The message should not mention my product or ask them to try anything.",
+            "prompt": "I'm building Differentiated Worksheets, a tool to help middle school ELA teachers in public schools with mixed-ability classes create leveled worksheets without spending hours rewriting. The problem is that making three versions of every worksheet takes 4-6 hours a week of unpaid time, meaning teachers either spend their Sundays rewriting them by hand or skip differentiation entirely. My riskiest assumption is that teachers trust AI-written material enough to hand it to their students. Please help me find 5 middle school ELA teachers for a 20-minute chat. List 10 specific places (online communities, job sites, events, groups) where I can find them. Also, write a short, friendly outreach message asking for a chat about their challenges with creating differentiated worksheets. Do not pitch the product in the message.",
             "pasteInto": "ChatGPT or Claude",
-            "tip": "Be specific in your outreach message about what you're asking for."
+            "tip": "Focus on finding people who actively participate in online teacher groups."
           },
           {
             "title": "Interview script",
-            "goal": "Understand teachers' current process and pain points for creating differentiated worksheets.",
+            "goal": "Understand the problem from the customer's perspective.",
             "todo": [
               "Create a 20-minute interview script.",
-              "Include questions about past behavior and workarounds.",
-              "Add questions to test your riskiest assumption."
+              "Focus questions on past behavior and workarounds.",
+              "Include questions about the riskiest assumption."
             ],
-            "prompt": "I am interviewing middle school ELA teachers about the problem of creating differentiated worksheets. My product is called Differentiated Worksheets. The problem is that creating three versions of every worksheet takes them 4-6 hours a week of unpaid time. My riskiest assumption is that teachers will trust AI-generated content enough to give it to their students. Please write a 20-minute interview script. The script should focus on their past behavior, not future hypothetical behavior. Include questions like: 'Tell me about the last time you had to create a differentiated worksheet. What was the situation? What did you do step-by-step? What was the hardest part? How much time did it take? What did you try before? What were the results?' Include follow-up probes like 'Why was that difficult?' or 'Tell me more about that.' Crucially, include at least two questions that directly probe my riskiest assumption about their trust in AI-generated content. For example, 'Have you ever used AI tools for lesson planning or content creation? If so, what was your experience? What concerns would you have about using AI to generate student materials?' End the interview by asking for referrals to other teachers who might experience this problem. Do not ask if they would use my product or pay for it.",
+            "prompt": "I'm creating Differentiated Worksheets to help middle school ELA teachers in public schools with mixed-ability classes who struggle with the 4-6 hours per week it takes to create differentiated worksheets. The current workaround is teachers rewrite worksheets by hand or skip differentiation. My riskiest assumption is that teachers trust AI-written material enough to hand it to their students. Please write a 20-minute interview script to understand their past behavior. Ask about the last time they faced this challenge, what they did, the cost of their workaround, and what they've tried. Include follow-up questions, at least two questions that test the riskiest assumption about trusting AI, and a closing ask for referrals. Do not ask if they would use or pay for a product.",
             "pasteInto": "ChatGPT or Claude",
-            "tip": "Focus on past actions, not opinions about your future product."
+            "tip": "Ask 'what did you do last time this happened?' to uncover real behavior."
           },
           {
             "title": "Make sense of the notes",
-            "goal": "Identify recurring pains, actual workarounds, and evidence for your riskiest assumption.",
+            "goal": "Identify patterns and key insights from your interviews.",
             "todo": [
-              "Paste your interview notes below this prompt.",
-              "Ask the AI to identify common pains.",
-              "Ask the AI to list workarounds and assumption evidence."
+              "List recurring pains mentioned by teachers.",
+              "Summarize the workarounds they are actually using.",
+              "Analyze evidence for and against the riskiest assumption."
             ],
-            "prompt": "I am developing Differentiated Worksheets, a tool to help middle school ELA teachers create leveled worksheets. The core problem is that creating three versions of each worksheet takes teachers 4-6 hours per week. My riskiest assumption is that teachers will trust AI-generated content enough to give it to their students. Please analyze my interview notes below. Identify: 1. The specific pains that were mentioned by 3 or more teachers. 2. The workarounds teachers are actually using. 3. Evidence gathered that supports or refutes the riskiest assumption about trusting AI content. 4. The 2-3 strongest, most direct quotes that capture the essence of the problem or a key insight. Assume the main user is a middle school ELA teacher in a public school with mixed-ability classes.",
+            "prompt": "I am researching Differentiated Worksheets, a tool for middle school ELA teachers in public schools with mixed-ability classes. The core problem is spending 4-6 hours weekly creating 3 versions of worksheets, leading to manual rewriting or skipping differentiation. My riskiest assumption is that teachers trust AI-written material enough to hand it to their students. Based on my interviews, please identify: 1. The top 3 pains that repeated across interviews. 2. The workarounds people are actually using. 3. Evidence supporting and refuting the riskiest assumption that teachers trust AI-written material. 4. The 3 most impactful direct quotes from the interviews. My interview notes:",
             "pasteInto": "ChatGPT or Claude",
-            "tip": "Copy and paste your notes directly after the prompt."
+            "tip": "Look for themes that multiple teachers mentioned independently."
           },
           {
             "title": "Go / adjust / stop",
-            "goal": "Decide whether to proceed, adjust, or stop based on teacher feedback.",
+            "goal": "Decide whether to proceed, adjust, or stop based on feedback.",
             "todo": [
-              "Review the AI's analysis of your interview notes.",
-              "Make a go, adjust, or stop decision.",
-              "Define your single next action."
+              "Summarize interview findings.",
+              "Make a clear go, adjust, or stop decision.",
+              "Define the single next action."
             ],
-            "prompt": "Based on the analysis of my interview notes for Differentiated Worksheets (a tool helping middle school ELA teachers save 4-6 hours/week creating differentiated worksheets), please make a 'go, adjust, or stop' decision. Use these rules: Go if 3+ teachers described the pain without prompting AND already use a workaround. Adjust if the pain is real but belongs to a different user or is a different problem. Stop if fewer than 2 teachers described the pain. Explain your decision in one paragraph and state the single most important next action I should take.",
+            "prompt": "Based on the following interview findings for Differentiated Worksheets, a tool for middle school ELA teachers in public schools with mixed-ability classes struggling with the time cost of creating 3 versions of worksheets, make a decision. The rules are: Go if 3 or more of the 5 interviewed teachers described the pain without prompting and already use a workaround. Adjust if the pain is real but belongs to a different user or problem. Stop if fewer than 2 described the pain. My interview findings:",
             "pasteInto": "ChatGPT or Claude",
-            "tip": "Be honest with yourself about the data."
+            "tip": "Be honest with yourself; stopping early is a win."
           }
         ]
       },
@@ -79,50 +79,50 @@
     },
     {
       "value": {
-        "intro": "This plan gets you a tiny first version of Differentiated Worksheets, focusing on saving teachers time on creating leveled worksheets. This version will be small enough to build in days.",
+        "intro": "These steps will help you define a super-small first version of Differentiated Worksheets, focused on solving the biggest pain for middle school ELA teachers: saving them hours of work each week.",
         "steps": [
           {
             "title": "One-page brief",
-            "goal": "Get a clear, one-page brief for Differentiated Worksheets that outlines the core value proposition for middle school ELA teachers.",
+            "goal": "Get a clear, one-page brief for Differentiated Worksheets that outlines the core problem, solution, and success metrics.",
             "todo": [
-              "Define the target user and their core problem.",
-              "List the 3 essential features for the first version.",
-              "State what is deliberately left out of the first version."
+              "Review the brief for clarity and completeness.",
+              "Ensure the one-page brief captures the essence of the product.",
+              "Confirm the first version has at most 3 features."
             ],
-            "prompt": "You are a product designer helping a founder create a one-page brief for their new product, Differentiated Worksheets. The product helps middle school ELA teachers create leveled worksheets without spending hours rewriting. The target user is middle school ELA teachers in public schools with mixed-ability classes. The core problem is that creating three versions of every worksheet takes 4-6 hours a week of unpaid time, time teachers could use for planning or personal life. The current workaround is copying worksheets and rewriting them by hand, or skipping differentiation. The core outcome is that teachers save 4-6 hours per week and provide every student with appropriate work. The riskiest assumption is that teachers will trust AI-generated content enough to give it to students.\n\nWrite a one-page brief for Differentiated Worksheets. Include:\n1. **Who it is for:** Clearly define the target user.\n2. **The problem:** Describe the pain point in simple terms.\n3. **The outcome:** What positive change will the user experience?\n4. **What is in the first version:** List the 3 most critical features to solve the core problem (e.g., uploading lesson notes, selecting reading levels, generating leveled worksheets).\n5. **What is deliberately left out:** List features that are not in the first version to keep it small (e.g., advanced formatting, saving templates, teacher collaboration).\n6. **How you will know it works:** Define the key metric or observable change that indicates success (e.g., teachers reporting saved time, observed usage of generated worksheets).",
+            "prompt": "You are a product designer helping a founder create a one-page brief for a new tool called Differentiated Worksheets. The target user is middle school ELA teachers in public schools with mixed-ability classes. The core problem is that making three versions of every worksheet takes 4-6 hours a week of unpaid time, forcing teachers to either spend their Sundays rewriting or skip differentiation. The proposed solution is a tool that allows teachers to upload lesson notes and get three leveled worksheets in a minute. The core outcome for the teacher is that every student gets work they can do, and the teacher gets their Sundays back. The founder is most unsure about whether teachers trust AI-written material enough to hand it to students.\n\nWrite a one-page brief for Differentiated Worksheets. Include:\n1.  **Who it is for:** Middle school ELA teachers in public schools with mixed-ability classes.\n2.  **The problem:** Teachers spend 4-6 hours weekly rewriting worksheets by hand for different reading levels, or skip differentiation altogether.\n3.  **The outcome:** Every student receives appropriately leveled work, and teachers reclaim their weekend time.\n4.  **What is in the first version:** At most 3 core features. Focus on the primary value proposition.\n5.  **What is deliberately left out:** Features not essential for the initial launch.\n6.  **How you will know it works:** Measurable indicators of success for the first version.",
             "pasteInto": "ChatGPT or Claude"
           },
           {
             "title": "Journey map",
-            "goal": "Map the current teacher's workaround and the future user journey with Differentiated Worksheets, highlighting points of friction.",
+            "goal": "Map out the teacher's current frustrating journey and their ideal journey with Differentiated Worksheets.",
             "todo": [
-              "Describe the current teacher's workflow and pain points.",
-              "Map the ideal workflow using Differentiated Worksheets.",
-              "Identify where time, money, or patience are lost in both journeys."
+              "Detail the steps of the current workaround.",
+              "Map out the steps with the new tool.",
+              "Identify where time, money, or patience is lost."
             ],
-            "prompt": "You are a product designer helping a founder map the user journey for Differentiated Worksheets. The product helps middle school ELA teachers create leveled worksheets without spending hours rewriting. The target user is middle school ELA teachers in public schools with mixed-ability classes. The core problem is that creating three versions of every worksheet takes 4-6 hours a week of unpaid time.\n\nCreate a user journey map for a middle school ELA teacher using Differentiated Worksheets. First, describe the current journey using their workaround (copying and rewriting worksheets by hand, or skipping differentiation). Detail each step the teacher takes, the frustrations they experience, and where they lose time, money, or patience. Second, describe the ideal journey using Differentiated Worksheets, from uploading lesson notes to distributing the leveled worksheets. For each step in the ideal journey, highlight how it removes friction compared to the current workaround and where time, money, or patience are saved. Assume the teacher needs to create 3 versions of one worksheet per day.",
+            "prompt": "You are a product designer helping a founder visualize the user journey for Differentiated Worksheets. The target user is middle school ELA teachers in public schools with mixed-ability classes. The problem is spending 4-6 hours weekly creating differentiated worksheets by hand. The solution allows teachers to upload notes and get 3 leveled worksheets instantly. The desired outcome is getting students appropriately leveled work and saving teachers their weekend time.\n\nCreate a user journey map for a middle school ELA teacher. First, describe their current journey today, including the workaround of copying and rewriting worksheets by hand or skipping differentiation. Then, describe their journey using Differentiated Worksheets. For each journey, clearly mark the points where time, money, or patience is lost.",
             "pasteInto": "ChatGPT or Claude"
           },
           {
             "title": "Find the friction",
-            "goal": "Identify the biggest friction points in the user journey and select the smallest product feature to solve the most critical one.",
+            "goal": "Identify the 3 biggest friction points for teachers and select the smallest product change to fix the main one.",
             "todo": [
-              "Review the user journey map for friction.",
-              "Name the 3 most critical friction points.",
-              "Recommend the smallest feature to solve the biggest friction."
+              "Analyze the journey map for friction.",
+              "Name the top 3 points of confusion or abandonment.",
+              "Recommend the smallest product to solve the biggest friction."
             ],
-            "prompt": "You are a product designer helping a founder of Differentiated Worksheets. The product helps middle school ELA teachers create leveled worksheets without spending hours rewriting. The target user is middle school ELA teachers in public schools with mixed-ability classes. The core problem is that creating three versions of every worksheet takes 4-6 hours a week of unpaid time.\n\nReview the following user journey map for Differentiated Worksheets:\n\n**Current Journey (Workaround):**\n1. Teacher identifies a need for a worksheet.\n2. Teacher finds or creates a master worksheet.\n3. Teacher spends 30-60 minutes rewriting the worksheet by hand or making simple digital edits to create 2 additional leveled versions.\n4. Teacher copies and distributes the different versions.\n5. Teacher experiences frustration from time spent, potential errors in manual rewriting, and guilt about inconsistent differentiation.\n\n**Ideal Journey (with Differentiated Worksheets):**\n1. Teacher identifies a need for a worksheet.\n2. Teacher uploads lesson notes or a master worksheet to Differentiated Worksheets.\n3. Differentiated Worksheets instantly generates 3 leveled versions.\n4. Teacher reviews and downloads the leveled worksheets.\n5. Teacher distributes the appropriate worksheet to each student.\n6. Teacher feels relief from saved time and confidence in providing targeted work.\n\nBased on this map, identify the 3 moments where teachers are most likely to get stuck, confused, or give up during their current workaround. Then, recommend the single smallest product feature for the first version of Differentiated Worksheets that addresses the biggest of these friction points. Everything else should be cut from the first version.",
+            "prompt": "You are a product designer helping a founder refine the first version of Differentiated Worksheets. The target user is middle school ELA teachers who face the pain of spending 4-6 hours weekly creating differentiated worksheets by hand. The proposed solution offers instant leveled worksheets from uploaded notes, aiming to give teachers their Sundays back and ensure students get appropriate work.\n\nReview the user journey map previously created for Differentiated Worksheets. Identify and name the 3 moments where teachers are most likely to get stuck, confused, or give up. Recommend the absolute smallest product change that will remove the biggest of these friction points. Ensure everything else is cut from the first version to keep it minimal.",
             "pasteInto": "ChatGPT or Claude"
           },
           {
             "title": "Key screens",
-            "goal": "Define the 3-5 key screens for the first version of Differentiated Worksheets that will be used by builders.",
+            "goal": "Define the 3-5 key screens needed for the smallest version of Differentiated Worksheets.",
             "todo": [
-              "Name each essential screen.",
-              "Describe the purpose and content of each screen.",
-              "State the main action a user takes on each screen."
+              "Describe each screen's purpose.",
+              "List the main elements on each screen.",
+              "Define the primary action for each screen."
             ],
-            "prompt": "You are a product designer helping a founder translate user needs into a visual plan for Differentiated Worksheets. The product helps middle school ELA teachers create leveled worksheets without spending hours rewriting. The first version's core feature is uploading lesson notes to generate 3 leveled worksheets.\n\nDescribe 3 to 5 key screens for the first version of Differentiated Worksheets. For each screen, provide:\n1. **Screen Name:** A clear, simple name (e.g., 'Upload Notes').\n2. **Purpose:** What the screen helps the user achieve.\n3. **What is on it:** A plain-language description of the elements and content displayed.\n4. **Main Action:** The single most important thing the user does on this screen.",
+            "prompt": "You are a product designer helping a founder define the key screens for the first version of Differentiated Worksheets. The product helps middle school ELA teachers create leveled worksheets quickly. The core pain is the 4-6 hours teachers spend weekly on differentiation, and the solution aims to save them time and ensure students get appropriate work. The smallest viable product focuses on the single biggest friction point identified previously.\n\nDescribe 3 to 5 key screens for the first version of Differentiated Worksheets in plain words. For each screen, include:\n1.  **Screen Name:** A clear, simple name.\n2.  **Purpose:** What the screen is for.\n3.  **What is on it:** Key information and elements visible to the user.\n4.  **Main Action:** The single most important thing the user should do on this screen.",
             "pasteInto": "ChatGPT or Claude"
           }
         ]
@@ -131,67 +131,67 @@
     },
     {
       "value": {
-        "intro": "This phase will create a clickable first version of Differentiated Worksheets. You will build it one piece at a time, pasting each prompt into your app builder. This will result in a working prototype you can show to your interviewees.",
+        "intro": "This phase creates a clickable version of your Differentiated Worksheets app. You'll build it piece by piece and add features in each step.",
         "steps": [
           {
             "title": "Jump-start",
-            "goal": "Create the basic structure and appearance of your app with three core screens.",
+            "goal": "Create the basic structure of your app with three initial screens: Home, Create Worksheet, and My Worksheets.",
             "todo": [
-              "Create the home screen.",
-              "Create the worksheet generation screen.",
-              "Create the worksheet display screen."
+              "Build the app's three main screens.",
+              "Add a clean, simple look and feel.",
+              "Include sample data for teachers."
             ],
-            "prompt": "Build a web app called Differentiated Worksheets for middle school ELA teachers. The app should have a clean, simple design. It needs three screens: 1. Home Screen: A welcoming page explaining that this app helps teachers create leveled worksheets quickly. It should have a button to 'Create New Worksheet'. 2. Worksheet Generation Screen: This screen allows teachers to input their lesson notes or paste text. It should have a large text area for input and a button labeled 'Generate Worksheets'. 3. Worksheet Display Screen: This screen will show the three versions of the generated worksheet (e.g., Level 1, Level 2, Level 3). Each version should be clearly separated. Include realistic sample data for a 7th-grade ELA lesson about identifying the theme in a short story. Show sample text for 'Level 1', 'Level 2', and 'Level 3' worksheets. The Home Screen should link to the Worksheet Generation screen, and the Worksheet Generation screen should link to the Worksheet Display screen after generation.",
+            "prompt": "Create a web app called Differentiated Worksheets for middle school ELA teachers. The app should have three screens: a Home screen explaining the app, a Create Worksheet screen where teachers can input their lesson notes, and a My Worksheets screen to view generated worksheets. Ensure a clean and simple design. Include realistic sample data for a few worksheets. The target user is a middle school ELA teacher in a public school with mixed-ability classes who struggles with the time it takes to create differentiated worksheets. The core problem is spending 4-6 hours per week rewriting worksheets for different reading levels. The app's core outcome is to provide every student with appropriate work and save teachers their Sundays. Assume the app should have a simple navigation between these three screens without any user logins.",
             "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
-            "tip": "This sets up the main areas of your app so you can start building the core features."
+            "tip": "This first step lays the foundation for your app."
           },
           {
             "title": "Core flow",
-            "goal": "Make the core feature work: generating leveled worksheets from teacher notes.",
+            "goal": "Enable teachers to generate a differentiated worksheet from their lesson notes.",
             "todo": [
-              "Allow note input on the generation screen.",
-              "Save the generated worksheets.",
-              "Display the saved worksheets."
+              "Make lesson notes input functional.",
+              "Allow worksheet generation to work.",
+              "Save the generated worksheet."
             ],
-            "prompt": "In the Differentiated Worksheets app, enhance the Worksheet Generation screen. Teachers should be able to paste their lesson notes into the text area. When they click 'Generate Worksheets', the app should process the notes and create three versions of a worksheet, each for a different reading level (Level 1: basic, Level 2: on-level, Level 3: advanced). These generated worksheets should be saved so they are available when the teacher returns to the app later. The app should then automatically navigate to the Worksheet Display screen to show these newly generated worksheets. Use the previous sample data about identifying theme in a short story, generating three distinct versions based on that input.",
+            "prompt": "In the Differentiated Worksheets app, make the core function work. When a teacher enters lesson notes on the 'Create Worksheet' screen and clicks 'Generate', the app should create three versions of the worksheet, each at a different reading level. These generated worksheets should then appear on the 'My Worksheets' screen. Assume the generated worksheets should be saved so they persist between the teacher's sessions. The target user is a middle school ELA teacher in a public school with mixed-ability classes. The problem is the time spent rewriting worksheets, and the solution is to generate leveled worksheets quickly. The app's core outcome is saving teachers time and providing appropriate work for all students. Ensure the 'Create Worksheet' screen has a clear way to input notes, and the 'My Worksheets' screen displays the newly created set.",
             "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
-            "tip": "This makes sure the main reason teachers use your app actually works."
+            "tip": "Focus on making the main task smooth and reliable."
           },
           {
             "title": "Outcome screen",
-            "goal": "Ensure the worksheet results are clear and understandable at a glance.",
+            "goal": "Display a clear and immediate outcome for the teacher after worksheet generation.",
             "todo": [
-              "Make titles for each worksheet level.",
-              "Clearly separate the three worksheet versions.",
-              "Add instructions for students on each worksheet."
+              "Show the number of worksheets created.",
+              "Highlight time saved instantly.",
+              "Confirm worksheets are ready."
             ],
-            "prompt": "On the Worksheet Display screen for Differentiated Worksheets, make the results immediately understandable. Each of the three worksheet versions needs a clear title: 'Level 1: Getting Started', 'Level 2: Digging Deeper', and 'Level 3: Advanced Analysis'. Ensure there is significant space or a clear visual break between each level's content. For each worksheet level, add a simple instruction at the top, such as 'Read the passage and answer the questions below.' Use the previously generated sample worksheets about identifying theme.",
+            "prompt": "Enhance the Differentiated Worksheets app to clearly show the core outcome. After a teacher generates a set of three leveled worksheets from their lesson notes, the app should immediately display a summary on the 'My Worksheets' screen. This summary should highlight that their lesson notes have been turned into three differentiated worksheets, ready for use. It should also convey the benefit of time saved, referencing the 'Sundays back' outcome. The target user is a middle school ELA teacher in a public school with mixed-ability classes who faces the problem of spending 4-6 hours per week on differentiation. Assume the 'My Worksheets' screen should show a list of generated worksheet sets, and clicking on a set reveals this summary outcome. The display should be understandable within five seconds.",
             "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
-            "tip": "The user must understand the value of the app within seconds of seeing the result."
+            "tip": "Make sure the user immediately sees the value they've received."
           },
           {
             "title": "Polish",
-            "goal": "Improve the app's usability with helpful empty and loading states and clear navigation.",
+            "goal": "Improve the app's usability with empty states, loading messages, and clear labels.",
             "todo": [
-              "Show a message when no worksheets are generated.",
-              "Indicate when worksheets are being generated.",
-              "Make button labels clear and action-oriented."
+              "Add messages for empty states.",
+              "Include loading indicators.",
+              "Clarify button and screen labels."
             ],
-            "prompt": "Refine the Differentiated Worksheets app. On the Worksheet Display screen, if no worksheets have been generated yet, show a clear message like 'You haven't created any worksheets. Click the button below to get started!'. Add a temporary message or visual indicator on the Worksheet Generation screen that says 'Generating your worksheets...' after the user clicks the button. Ensure all buttons are clearly labeled with their action, such as 'Create New Worksheet' on the Home Screen and 'Generate My Worksheets' on the Worksheet Generation screen. Make sure the layout looks good on a phone screen.",
+            "prompt": "Refine the Differentiated Worksheets app for better usability. Add empty states to the 'My Worksheets' screen, showing a message like 'No worksheets generated yet. Start creating some!' when no worksheets are present. Implement a simple loading indicator or message, such as 'Generating your worksheets...' when the generation process is running. Ensure all button labels are clear, for example, 'Create New Worksheet' instead of just 'Create'. Make sure the layout is clean and easy to use on a phone. The target user is a middle school ELA teacher in a public school with mixed-ability classes. The problem is the time burden of differentiation. Assume the app's overall aesthetic should remain simple and professional.",
             "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
-            "tip": "These small details make the app feel more polished and professional."
+            "tip": "Small details like these make a big difference in user experience."
           },
           {
             "title": "Ready to test",
-            "goal": "Prepare the app for user testing with a welcome message and feedback mechanism.",
+            "goal": "Prepare the app for testing by adding a welcome message and feedback mechanism.",
             "todo": [
               "Add a brief welcome message.",
               "Include a simple feedback form.",
-              "Review the main worksheet creation flow."
+              "Review the main flow for clarity."
             ],
-            "prompt": "Finalize the Differentiated Worksheets app for testing. On the Home Screen, add a brief welcome message at the top: 'Welcome to Differentiated Worksheets! Save time creating leveled ELA worksheets for your middle school students.' Add a simple feedback section at the bottom of the Home Screen with a text box labeled 'Feedback:' and a button labeled 'Send Feedback'. Ensure the main flow—from entering notes on the Worksheet Generation screen to viewing the results on the Worksheet Display screen—works smoothly. Double-check that generated worksheets are visible when revisiting the app.",
+            "prompt": "Finalize the Differentiated Worksheets app for initial user testing. Add a concise welcome message on the Home screen that briefly explains the app's purpose: 'Differentiated Worksheets helps middle school ELA teachers create leveled worksheets quickly.' Include a simple, unobtrusive feedback form or link, perhaps on the Home screen or in a settings area, allowing users to submit comments like 'Have feedback? Let us know!' Ensure the primary flow from entering notes to viewing generated worksheets is smooth and logical. The target user is a middle school ELA teacher in a public school with mixed-ability classes. The problem is the time cost of differentiation. Assume the feedback mechanism should be a simple text input field and a submit button.",
             "pasteInto": "Your app-builder project (Bolt, Lovable, v0 or Replit)",
-            "tip": "This makes the app ready to share and gather crucial feedback from real users."
+            "tip": "Get ready to observe how real users interact with your app."
           }
         ]
       },
