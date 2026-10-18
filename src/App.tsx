@@ -11,65 +11,43 @@ const QUESTIONS: Question[] = [
   id: 'q1',
   label: 'Q1',
   question: "What's your idea?",
-  subtext: 'One to two sentences. What does it do.',
-  probing: ['Who is it for?', 'What problem does it solve?']
+  subtext: 'One to two sentences. What does it do.'
 },
 {
   id: 'q2',
   label: 'Q2',
   question: 'Who specifically has this problem?',
-  subtext: 'Role and situation, not demographics.',
-  probing: [
-  'What are they doing when this problem shows up?',
-  "What's their job or situation when this happens?"]
-
+  subtext: 'Role and situation, not demographics.'
 },
 {
   id: 'q3',
   label: 'Q3',
   question: "What's the pain point?",
-  subtext: "The specific frustration or cost they're experiencing.",
-  probing: [
-  'How often does this happen?',
-  'What does it cost them: time, money, or something else?']
-
+  subtext: "The specific frustration or cost they're experiencing."
 },
 {
   id: 'q4',
   label: 'Q4',
   question: "What's their current workaround or hack?",
-  subtext: 'What they do today without your solution.',
-  probing: ['Is it working for them?', 'What breaks down when they use it?']
+  subtext: 'What they do today without your solution.'
 },
 {
   id: 'q5',
   label: 'Q5',
   question: 'What does your solution actually do for them?',
-  subtext: 'The functional thing it delivers.',
-  probing: [
-  "What's the first thing they'd use it for?",
-  'What does it replace?']
-
+  subtext: 'The functional thing it delivers.'
 },
 {
   id: 'q6',
   label: 'Q6',
   question: 'What changes for them when they have it?',
-  subtext: 'The outcome. What their work or life looks like after.',
-  probing: [
-  'How would they describe that to someone else?',
-  "What can they do that they couldn't before?"]
-
+  subtext: 'The outcome. What their work or life looks like after.'
 },
 {
   id: 'q7',
   label: 'Q7',
   question: 'What are you most unsure about?',
-  subtext: 'The thing keeping you from feeling confident this will work.',
-  probing: [
-  'Is it about whether enough people have this problem?',
-  "Is it about whether they'd pay for it?"]
-
+  subtext: 'The thing keeping you from feeling confident this will work.'
 }];
 
 

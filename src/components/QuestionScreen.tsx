@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Lightbulb } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Lightbulb } from 'lucide-react';
+import { QUESTION_HELP } from '../questionHelp';
 
 export interface Question {
   id: string;
   label: string;
   question: string;
   subtext: string;
-  probing: string[];
 }
 
 interface QuestionScreenProps {
@@ -31,8 +31,10 @@ export function QuestionScreen({
   onBack
 }: QuestionScreenProps) {
   const [timeLeft, setTimeLeft] = useState(60);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   useEffect(() => {
+    setHelpOpen(false);
     setTimeLeft(60);
     const timer = setInterval(() => {
       setTimeLeft((prev) => prev > 0 ? prev - 1 : 0);
@@ -40,7 +42,8 @@ export function QuestionScreen({
     return () => clearInterval(timer);
   }, [question.id]);
 
-  const showExtraThinking = value.length > 0 && value.length < 50;
+  const help = QUESTION_HELP[question.id];
+  const helpPanelId = `help-${question.id}`;
   const progressPercentage = (questionIndex + 1) / totalQuestions * 100;
 
   return (
@@ -79,25 +82,57 @@ export function QuestionScreen({
           rows={4} />
         
 
-        {showExtraThinking &&
-        <div className="mt-4 md:mt-6 bg-white/5 border border-brand-accent/20 rounded-xl p-4 md:p-6">
-            <div className="flex items-center gap-2 text-brand-accent mb-2">
-              <Lightbulb size={16} className="md:w-5 md:h-5" />
-              <span className="text-xs md:text-sm font-bold uppercase tracking-wider">
-                Extra thinking
-              </span>
-            </div>
-            <ul className="space-y-2 md:space-y-3">
-              {question.probing.map((probe, idx) =>
-            <li
-              key={idx}
-              className="text-brand-surface/90 text-sm md:text-base flex items-start gap-2">
+        {help &&
+        <div className="mt-4 md:mt-6 bg-white/5 border border-brand-accent/20 rounded-xl">
+            <button
+            type="button"
+            onClick={() => setHelpOpen((open) => !open)}
+            aria-expanded={helpOpen}
+            aria-controls={helpPanelId}
+            className="w-full min-h-[44px] flex items-center justify-between gap-2 px-4 md:px-6 py-2 text-brand-accent rounded-xl hover:bg-white/5 transition-colors">
 
-                  <span className="text-brand-accent mt-0.5">•</span>
-                  <span>{probe}</span>
-                </li>
-            )}
-            </ul>
+              <span className="flex items-center gap-2">
+                <Lightbulb size={16} className="md:w-5 md:h-5" />
+                <span className="text-xs md:text-sm font-bold uppercase tracking-wider">
+                  Need help?
+                </span>
+              </span>
+              <ChevronDown
+              size={18}
+              className={`transition-transform ${helpOpen ? 'rotate-180' : ''}`} />
+
+            </button>
+
+            {helpOpen &&
+          <div id={helpPanelId} className="px-4 md:px-6 pb-4 md:pb-6">
+                <ul className="space-y-2 md:space-y-3 mb-4">
+                  {help.guiding.map((guide, idx) =>
+              <li
+                key={idx}
+                className="text-brand-surface/90 text-sm md:text-base flex items-start gap-2">
+
+                      <span className="text-brand-accent mt-0.5">•</span>
+                      <span>{guide}</span>
+                    </li>
+              )}
+                </ul>
+                <div className="text-brand-surface/60 text-xs md:text-sm mb-2">
+                  Tap an example to use it, then make it yours.
+                </div>
+                <div className="flex flex-col gap-2">
+                  {help.examples.map((example, idx) =>
+              <button
+                key={idx}
+                type="button"
+                onClick={() => onChange(value.trim() ? `${value.trimEnd()}\n${example}` : example)}
+                className="w-full min-h-[44px] text-left text-sm md:text-base text-brand-surface bg-white/5 border border-brand-accent/30 rounded-lg px-3 py-2 hover:bg-brand-accent/20 transition-colors break-words">
+
+                      {example}
+                    </button>
+              )}
+                </div>
+              </div>
+          }
           </div>
         }
       </div>
