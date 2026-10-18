@@ -1,5 +1,4 @@
 import "./index.css";
-import React from "react";
 import { render } from "react-dom";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { App } from "./App";

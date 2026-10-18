@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAction } from 'convex/react';
 import { api } from '../convex/_generated/api';
 import { QuestionScreen, Question } from './components/QuestionScreen';
