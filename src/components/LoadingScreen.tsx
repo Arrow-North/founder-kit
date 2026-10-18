@@ -1,13 +1,16 @@
+import type { ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
 interface LoadingScreenProps {
   title?: string;
   message?: string;
   note?: string;
+  children?: ReactNode;
 }
 export function LoadingScreen({
   title = "Building your Founder's Idea Kit...",
   message = 'Turning your answers into a step-by-step plan.',
-  note = 'This usually takes under a minute.'
+  note = 'This usually takes under a minute.',
+  children
 }: LoadingScreenProps) {
   return (
     <div className="flex flex-col w-full h-full min-h-screen bg-brand-dark text-white items-center justify-center px-6 md:px-8 text-center">
@@ -23,6 +26,7 @@ export function LoadingScreen({
           {note}
         </p>
       }
+      {children}
     </div>);
 
 }

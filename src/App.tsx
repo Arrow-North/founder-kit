@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAction } from 'convex/react';
 import { api } from '../convex/_generated/api';
 import { QuestionScreen, Question } from './components/QuestionScreen';
-import { EmailCaptureScreen } from './components/EmailCaptureScreen';
+import { ContactDetails, EmailCaptureScreen } from './components/EmailCaptureScreen';
 import { LoadingScreen } from './components/LoadingScreen';
 import { navigate } from './router';
 
@@ -65,6 +65,8 @@ type ScreenState =
 export function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenState>('q1');
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [contact, setContact] = useState<ContactDetails | undefined>(undefined);
+  const [startError, setStartError] = useState<string | null>(null);
 
   // Saves the submission and starts kit generation on the server
   const startKit = useAction(api.kits.startKit);
@@ -90,6 +92,8 @@ export function App() {
   };
 
   const handleEmailSubmit = async (submittedEmail: string, submittedFirstName: string, submittedLastName: string) => {
+    setContact({ email: submittedEmail, firstName: submittedFirstName, lastName: submittedLastName });
+    setStartError(null);
     // Move to loading screen immediately
     setCurrentScreen('loading');
 
@@ -116,7 +120,8 @@ export function App() {
       navigate(`/kit/${kitId}`);
     } catch (error) {
       console.error('❌ Error starting kit:', error);
-      alert('There was an error starting your kit. Please try again in a moment.');
+      setStartError("We couldn't start your kit. Your answers are still here, so you can try again.");
+      setCurrentScreen('email');
     }
   };
 
@@ -138,7 +143,7 @@ export function App() {
     }
     switch (currentScreen) {
       case 'email':
-        return <EmailCaptureScreen onSubmit={handleEmailSubmit} />;
+        return <EmailCaptureScreen onSubmit={handleEmailSubmit} initialValues={contact} error={startError} />;
       case 'loading':
         return <LoadingScreen />;
       default:

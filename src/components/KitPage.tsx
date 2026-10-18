@@ -5,6 +5,40 @@ import { KitData, KitView } from './KitView';
 import { LoadingScreen } from './LoadingScreen';
 
 const DEMO_PREFIX = 'demo-';
+const SLOW_PENDING_MS = 90_000;
+
+function PendingKit({ createdAt }: {createdAt: number;}) {
+  const [slow, setSlow] = useState(() => Date.now() - createdAt > SLOW_PENDING_MS);
+  useEffect(() => {
+    if (slow) return;
+    const wait = Math.max(0, createdAt + SLOW_PENDING_MS - Date.now());
+    const timer = setTimeout(() => setSlow(true), wait);
+    return () => clearTimeout(timer);
+  }, [createdAt, slow]);
+
+  return (
+    <LoadingScreen
+      title="Building your kit"
+      message="We're turning your answers into a step-by-step plan."
+      note="This usually takes under a minute. This page updates on its own.">
+
+      {slow &&
+      <div className="mt-8 w-full max-w-md">
+          <p className="text-brand-surface/90 text-base md:text-lg mb-4">
+            Still working, this can take a minute.
+          </p>
+          <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="w-full min-h-[44px] bg-white/10 text-white py-3 rounded-xl font-bold text-base md:text-lg hover:bg-white/20 transition-colors">
+
+            Refresh
+          </button>
+        </div>
+      }
+    </LoadingScreen>);
+
+}
 
 function MessageScreen({ title, message }: {title: string;message: string;}) {
   return (
@@ -33,12 +67,7 @@ function KitContent({ kit }: {kit: KitData | null | undefined;}) {
 
   }
   if (kit.status === 'pending') {
-    return (
-      <LoadingScreen
-        title="Building your kit"
-        message="We're turning your answers into a step-by-step plan."
-        note="This usually takes under a minute. This page updates on its own." />);
-
+    return <PendingKit createdAt={kit.createdAt} />;
   }
   if (kit.status === 'failed' || !kit.summary || !kit.phases) {
     return (
