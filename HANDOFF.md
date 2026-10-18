@@ -21,6 +21,10 @@ Branch: `output-upgrade` (not merged, not deployed). Base: `main`.
 | `31a0c81` | 5 — kit-ready email |
 | `eea5941` | 6 — Need help? toggle |
 | `f2de270` | 7 — demo safety |
+| `96cab87` | 8 — handoff (this file) |
+| `e81f658` | cleanup — unused React imports removed |
+
+Build: `npm run build` passes and `npx tsc --noEmit` passes with 0 errors.
 
 ## Convex schema changes
 
