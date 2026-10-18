@@ -171,9 +171,11 @@ function StepCard({ step, number, isDone, onToggle }: {step: Step;number: number
           <CopyButton text={step.prompt} />
         </div>
         <PromptBox text={step.prompt} />
+        {step.pasteInto !== 'ChatGPT or Claude' &&
         <p className="text-brand-dark/60 text-sm mt-2">
-          Paste into: <span className="font-medium text-brand-dark">{step.pasteInto}</span>
-        </p>
+            Paste into: <span className="font-medium text-brand-dark">{step.pasteInto}</span>
+          </p>
+        }
       </div>
 
       {step.tip &&

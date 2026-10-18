@@ -19,7 +19,9 @@ interface QuestionScreenProps {
   onBack: () => void;
 }
 
-const ACTION_BAR_HEIGHT = 64;
+const ACTION_BAR_HEIGHT = 92;
+const SAFE_AREA_BOTTOM = 'env(safe-area-inset-bottom)';
+const ACTION_BAR_TOTAL = `calc(${ACTION_BAR_HEIGHT}px + ${SAFE_AREA_BOTTOM})`;
 
 export function QuestionScreen({
   question,
@@ -49,7 +51,7 @@ export function QuestionScreen({
   return (
     <div
       className="flex flex-col w-full bg-brand-dark text-white relative"
-      style={{ minHeight: '100dvh', paddingBottom: ACTION_BAR_HEIGHT }}>
+      style={{ minHeight: '100dvh', paddingBottom: ACTION_BAR_TOTAL }}>
 
       <div className="w-full pt-6 sm:pt-8 md:pt-10 px-4 sm:px-6 md:px-8">
         <div className="text-brand-accent text-xs sm:text-sm font-medium mb-2 text-center">
@@ -139,7 +141,7 @@ export function QuestionScreen({
 
       <div
         className="fixed bottom-0 left-0 right-0 max-w-[390px] sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto bg-brand-dark border-t border-white/10 px-4 sm:px-6 md:px-8 flex items-center justify-between z-20"
-        style={{ height: ACTION_BAR_HEIGHT }}>
+        style={{ height: ACTION_BAR_TOTAL, paddingBottom: SAFE_AREA_BOTTOM }}>
 
         <button
           onClick={onBack}
