@@ -33,7 +33,8 @@ const SHARED_RULES = `Writing rules. Follow all of them.
 - Never mention dates, years, or prices of tools.
 - If an answer is thin or missing, make a sensible assumption from the other answers and say so inside the prompt, for example "Assume the main user is a solo bookkeeper." Never switch to a different product or invent a new idea.
 - Each todo list has at most 3 lines. Each line starts with a verb and stays under 15 words.
-- Each goal is one sentence.`;
+- Each goal is one sentence.
+- Each tip is one complete sentence, or leave it out.`;
 
 const withRules = (system: string) => `${system}\n\n${SHARED_RULES}`;
 
@@ -56,9 +57,9 @@ Step 1, Recruit 5 people. The prompt asks the AI to list 10 specific places wher
 
 Step 2, Interview script. The prompt asks the AI to write a 20-minute interview script about the person's past behaviour: the last time the problem happened, what they did, what the workaround costs them, and what they have already tried. It must include follow-up probes, at least two questions that test the riskiest assumption, and a closing ask for referrals. It must not ask whether they would use or pay for the product.
 
-Step 3, Make sense of the notes. The prompt is used after the interviews. It gives the AI the product context, then tells the founder to paste their interview notes below it. It asks for: the pains that repeated, the workarounds people actually use, evidence for and against the riskiest assumption, and the strongest direct quotes.
+Step 3, Make sense of the notes. The prompt is used after the interviews. It gives the AI the product context and ends with the line "My interview notes:" so the founder pastes their notes underneath. Never write a placeholder such as PASTE NOTES HERE. It asks for: the pains that repeated, the workarounds people actually use, evidence for and against the riskiest assumption, and the strongest direct quotes.
 
-Step 4, Go, adjust or stop. The prompt asks the AI to make a call using these rules. Go: 3 or more of the 5 described the pain without prompting and already use a workaround. Adjust: the pain is real but belongs to a different user or a different problem. Stop: fewer than 2 described the pain. It asks for a one-paragraph decision and the single next action.`);
+Step 4, Go, adjust or stop. The prompt asks the AI to make a call using these rules. Go: 3 or more of the 5 described the pain without prompting and already use a workaround. Adjust: the pain is real but belongs to a different user or a different problem. Stop: fewer than 2 described the pain. It ends with the line "My interview findings:" so the founder pastes the step 3 summary underneath. It asks for a one-paragraph decision and the single next action.`);
 
 const DESIGN_SYSTEM = withRules(`You are a product designer. You help a non-technical founder turn a validated idea into a clear plan for a small first version before anything is built. Produce exactly 4 steps in this order. Each step has a goal, a todo list, a ready-to-paste prompt for ChatGPT or Claude, and an optional one-line tip.
 
@@ -82,7 +83,7 @@ Step 1, Jump-start. The prompt creates the project: what the app is, who it is f
 
 Step 2, Core flow. The prompt makes the main task work from start to finish: the one thing the user came to do, with sample data that stays saved between visits.
 
-Step 3, Outcome screen. The prompt builds the screen that shows the core outcome. The user should understand their result within five seconds.
+Step 3, Outcome screen. The prompt builds the screen that shows the core outcome from the product summary, named in the prompt (for example time saved or money collected), not a generic detail screen. The user should understand their result within five seconds.
 
 Step 4, Polish. The prompt adds empty states, loading states, plain-language error messages, a layout that works on a phone, and clearer button labels.
 

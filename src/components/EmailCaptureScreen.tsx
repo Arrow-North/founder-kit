@@ -25,7 +25,7 @@ export function EmailCaptureScreen({ onSubmit }: EmailCaptureScreenProps) {
           Almost there.
         </h1>
         <p className="text-brand-surface/90 text-lg md:text-xl mb-10 md:mb-12">
-          Enter your email to access the downloads.
+          We'll send you a link to your kit so you can come back to it anytime.
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 md:gap-5">
@@ -65,7 +65,7 @@ export function EmailCaptureScreen({ onSubmit }: EmailCaptureScreenProps) {
           </button>
 
           <p className="text-center text-brand-surface/60 text-sm md:text-base mt-4">
-            No account needed. Enter your email to access the downloads.
+            No account needed.
           </p>
         </form>
       </div>

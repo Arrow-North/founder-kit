@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FunctionReturnType } from 'convex/server';
-import { Check, Copy, Printer } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, Copy, Printer } from 'lucide-react';
 import { api } from '../../convex/_generated/api';
 
 export type KitData = NonNullable<FunctionReturnType<typeof api.kits.getKit>>;
@@ -90,6 +90,47 @@ function CopyButton({ text }: {text: string;}) {
 
 }
 
+function PromptBox({ text }: {text: string;}) {
+  const [expanded, setExpanded] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el || expanded) return;
+    const measure = () => setOverflows(el.scrollHeight > el.clientHeight + 1);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [text, expanded]);
+
+  const clamped = !expanded && overflows;
+
+  return (
+    <div className="bg-brand-surface/60 border border-brand-dark/10 rounded-xl p-4 text-brand-dark text-sm md:text-base leading-relaxed print:bg-white">
+      <div
+        ref={textRef}
+        className={`whitespace-pre-wrap break-words ${expanded ? '' : 'max-h-[13em] overflow-hidden'} ${
+        clamped ? '[mask-image:linear-gradient(to_bottom,black_55%,transparent)]' : ''} print:max-h-none print:overflow-visible print:[mask-image:none]`}>
+
+        {text}
+      </div>
+      {(overflows || expanded) &&
+      <button
+        type="button"
+        onClick={() => setExpanded((prev) => !prev)}
+        aria-expanded={expanded}
+        className="mt-1 -mb-2 min-h-[44px] inline-flex items-center gap-1 text-brand-accent font-bold text-sm md:text-base hover:underline print:hidden">
+
+          {expanded ? 'Show less' : 'Show full prompt'}
+          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
+      }
+    </div>);
+
+}
+
 function StepCard({ step, number, isDone, onToggle }: {step: Step;number: number;isDone: boolean;onToggle: () => void;}) {
   return (
     <li className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-black/5 break-inside-avoid-page">
@@ -129,9 +170,7 @@ function StepCard({ step, number, isDone, onToggle }: {step: Step;number: number
           <div className="text-brand-accent text-xs md:text-sm font-bold uppercase tracking-wider">Your prompt</div>
           <CopyButton text={step.prompt} />
         </div>
-        <div className="bg-brand-surface/60 border border-brand-dark/10 rounded-xl p-4 text-brand-dark text-sm md:text-base leading-relaxed whitespace-pre-wrap break-words max-h-72 overflow-y-auto print:max-h-none print:overflow-visible print:bg-white">
-          {step.prompt}
-        </div>
+        <PromptBox text={step.prompt} />
         <p className="text-brand-dark/60 text-sm mt-2">
           Paste into: <span className="font-medium text-brand-dark">{step.pasteInto}</span>
         </p>
