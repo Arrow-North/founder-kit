@@ -1,274 +1,142 @@
 /**
- * Email sending with Resend API
+ * Kit-ready email, sent once per kit from kits.generateKit via Resend.
  */
 
-import { v } from "convex/values";
-import { action } from "./_generated/server";
 import { Resend } from "resend";
-import { api } from "./_generated/api";
+
+const FROM = "Arrow North Team <lpham@arrownorth.design>";
+const DEFAULT_SITE_URL = "https://founder.arrownorth.design";
+const FONT = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
+export type KitEmailInput = {
+  firstName: string;
+  productName: string;
+  pitch: string;
+  kitId: string;
+  stepCounts: { validate: number; design: number; build: number };
+  siteUrl?: string;
+};
+
+export type EmailResult =
+  | { emailStatus: "sent" }
+  | { emailStatus: "skipped" | "failed"; emailError: string };
+
+export function kitUrl(kitId: string, siteUrl?: string): string {
+  const base = (siteUrl || process.env.SITE_URL || DEFAULT_SITE_URL).replace(/\/+$/, "");
+  return `${base}/kit/${encodeURIComponent(kitId)}`;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function phaseLines(counts: KitEmailInput["stepCounts"]): Array<[string, string]> {
+  return [
+    ["Validate", `${counts.validate} steps to check the problem with real people`],
+    ["Design", `${counts.design} steps to shape the brief, journey and key screens`],
+    ["Build", `${counts.build} steps with ready-to-paste prompts for your first version`],
+  ];
+}
+
+export function buildKitEmail(input: KitEmailInput): { subject: string; html: string; text: string } {
+  const url = kitUrl(input.kitId, input.siteUrl);
+  const firstName = input.firstName.trim() || "there";
+  const subject = `Your Founder Kit for ${input.productName} is ready`;
+  const phases = phaseLines(input.stepCounts);
+  const footnote = "This link never expires. Open it anytime, and use Save as PDF on the page to keep a copy.";
+
+  const phaseRows = phases
+    .map(
+      ([name, line]) => `
+              <tr>
+                <td style="padding:6px 0;font-family:${FONT};font-size:15px;line-height:22px;color:#07331E;">
+                  <strong>${name}</strong> &middot; ${escapeHtml(line)}
+                </td>
+              </tr>`
+    )
+    .join("");
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHtml(subject)}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#FFEED6;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFEED6;">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#FFEED6;">
+          <tr>
+            <td style="background-color:#07331E;padding:28px 32px;font-family:${FONT};">
+              <div style="font-size:13px;line-height:18px;letter-spacing:1px;text-transform:uppercase;color:#F1BF3C;font-weight:600;">Arrow North</div>
+              <div style="font-size:24px;line-height:32px;color:#FFEED6;font-weight:700;padding-top:6px;">Your Founder Kit is ready</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px;font-family:${FONT};color:#07331E;">
+              <p style="margin:0 0 16px 0;font-size:16px;line-height:24px;">Hi ${escapeHtml(firstName)},</p>
+              <p style="margin:0 0 20px 0;font-size:16px;line-height:24px;">${escapeHtml(input.pitch)}</p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">${phaseRows}
+              </table>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
+                <tr>
+                  <td align="center" bgcolor="#F1BF3C" style="background-color:#F1BF3C;border-radius:6px;">
+                    <a href="${escapeHtml(url)}" target="_blank" style="display:inline-block;padding:14px 28px;font-family:${FONT};font-size:16px;line-height:20px;font-weight:700;color:#07331E;text-decoration:none;border-radius:6px;">Open your kit</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0;font-size:14px;line-height:21px;color:#07331E;">${footnote}</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  const text = [
+    `Hi ${firstName},`,
+    "",
+    input.pitch,
+    "",
+    ...phases.map(([name, line]) => `${name}: ${line}`),
+    "",
+    `Open your kit: ${url}`,
+    "",
+    footnote,
+  ].join("\n");
+
+  return { subject, html, text };
+}
 
 /**
- * Send email with Resend
+ * Sends the kit email. Never throws: a missing key or send error is returned
+ * so the caller can record it without failing the kit.
  */
-export const sendEmail = action({
-  args: {
-    to: v.string(),
-    subject: v.string(),
-    html: v.string(),
-    from: v.optional(v.string()),
-  },
-  handler: async (_ctx, args) => {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      throw new Error("RESEND_API_KEY environment variable is not set");
-    }
+export async function sendKitEmail(to: string, input: KitEmailInput): Promise<EmailResult> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn(`Kit ${input.kitId}: RESEND_API_KEY not set, email skipped`);
+    return { emailStatus: "skipped", emailError: "RESEND_API_KEY environment variable is not set" };
+  }
 
-    try {
-      const resend = new Resend(apiKey);
-
-      const result = await resend.emails.send({
-        from: args.from || 'lpham@arrownorth.design',
-        to: args.to,
-        subject: args.subject,
-        html: args.html,
-      });
-
-      console.log("Email sent successfully:", result);
-      return {
-        success: true,
-        data: result,
-      };
-    } catch (error: any) {
-      console.error("Error sending email:", error);
-      throw new Error(`Failed to send email: ${error.message}`);
-    }
-  },
-});
-
-/**
- * Send Founder's Idea Kit email with all three documents
- */
-export const sendFounderKitEmail = action({
-  args: {
-    to: v.string(),
-    firstName: v.string(),
-    lastName: v.string(),
-    documentUrls: v.object({
-      validation: v.string(),
-      vibeCoding: v.string(),
-      uxPlaybook: v.string(),
-    }),
-  },
-  handler: async (_ctx, args) => {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      throw new Error("RESEND_API_KEY environment variable is not set");
-    }
-
-    try {
-      const resend = new Resend(apiKey);
-
-      const emailHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body {
-              font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-              line-height: 1.6;
-              color: #07331E;
-              max-width: 600px;
-              margin: 0 auto;
-              padding: 20px;
-            }
-            .header {
-              background: #07331E;
-              color: #FFEED6;
-              padding: 30px 20px;
-              border-radius: 8px 8px 0 0;
-              text-align: center;
-            }
-            .header h1 {
-              margin: 0;
-              font-size: 28px;
-            }
-            .content {
-              background: #FFEED6;
-              padding: 30px 20px;
-              border-radius: 0 0 8px 8px;
-            }
-            .greeting {
-              font-size: 18px;
-              margin-bottom: 20px;
-            }
-            .document-section {
-              background: white;
-              border: 2px solid #3B9B6D;
-              border-radius: 8px;
-              padding: 20px;
-              margin: 15px 0;
-            }
-            .document-title {
-              color: #3B9B6D;
-              font-size: 16px;
-              font-weight: bold;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-              margin-bottom: 10px;
-            }
-            .document-description {
-              color: #07331E;
-              margin-bottom: 15px;
-              font-size: 14px;
-            }
-            .download-btn {
-              display: inline-block;
-              background: #F1BF3C;
-              color: #07331E;
-              padding: 12px 24px;
-              text-decoration: none;
-              border-radius: 6px;
-              font-weight: bold;
-              font-size: 14px;
-            }
-            .footer {
-              text-align: center;
-              margin-top: 30px;
-              padding-top: 20px;
-              border-top: 1px solid #3B9B6D;
-              color: #07331E;
-              font-size: 12px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>🎉 Your Founder's Idea Kit is Ready!</h1>
-          </div>
-
-          <div class="content">
-            <p class="greeting">Hi ${args.firstName},</p>
-
-            <p>Thank you for completing the Founder's Idea Kit workshop! Your personalized documents have been generated and are ready to download.</p>
-
-            <p>Here are your three outputs:</p>
-
-            <div class="document-section">
-              <div class="document-title">📄 Output 1: Validation Document</div>
-              <p class="document-description">
-                A practical user interview guide with research questions tailored to your idea. Use this to validate your assumptions with real users.
-              </p>
-              <a href="${args.documentUrls.validation}" class="download-btn">Download Validation Doc</a>
-            </div>
-
-            <div class="document-section">
-              <div class="document-title">💻 Output 2: Vibe Coding Prompts</div>
-              <p class="document-description">
-                Ready-to-use prompts for AI coding tools (Bolt, v0, Replit). Paste these to build your first demo quickly.
-              </p>
-              <a href="${args.documentUrls.vibeCoding}" class="download-btn">Download Coding Prompts</a>
-            </div>
-
-            <div class="document-section">
-              <div class="document-title">🎨 Output 3: UX Playbook</div>
-              <p class="document-description">
-                A product brief with user flows and design priorities. Use this to guide your first design decisions.
-              </p>
-              <a href="${args.documentUrls.uxPlaybook}" class="download-btn">Download UX Playbook</a>
-            </div>
-
-            <p style="margin-top: 30px;">
-              <strong>What's next?</strong><br>
-              These documents are your starting point. Use them to talk to users, build a prototype, or plan your next steps.
-            </p>
-
-            <p>This framework is reusable—same seven questions, any idea. Come back anytime!</p>
-
-            <div class="footer">
-              <p>Built with the Founder's Idea Kit<br>
-              Questions? Just reply to this email.</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
-
-      const result = await resend.emails.send({
-        from: 'Arrow North Team <lpham@arrownorth.design>',
-        to: args.to,
-        subject: `${args.firstName}, Your Founder's Idea Kit is Ready! 🎉`,
-        html: emailHtml,
-      });
-
-      console.log("Founder Kit email sent successfully:", result);
-      return {
-        success: true,
-        data: result,
-      };
-    } catch (error: any) {
-      console.error("Error sending Founder Kit email:", error);
-      throw new Error(`Failed to send email: ${error.message}`);
-    }
-  },
-});
-
-/**
- * Fetch document URLs and send Founder's Idea Kit email
- * This combines fetching the URLs from the database and sending the email
- */
-export const sendFounderKitEmailWithDocs = action({
-  args: {
-    userId: v.string(),
-    firstName: v.string(),
-    lastName: v.string(),
-  },
-  handler: async (ctx, args): Promise<{ success: boolean; data: any }> => {
-    console.log(`📧 Fetching document URLs for ${args.userId}...`);
-
-    // Query the documents for this user
-    const documents = await ctx.runQuery(api.documents.getUserDocumentUrls, {
-      userId: args.userId,
-    });
-
-    if (!documents || documents.length === 0) {
-      throw new Error("No documents found for this user");
-    }
-
-    // Build document URLs object
-    const documentUrls: Record<string, string> = {};
-    for (const doc of documents) {
-      if (doc.docType === 'VALIDATION' && doc.fileUrl) {
-        documentUrls.validation = doc.fileUrl;
-      } else if (doc.docType === 'VIBE_CODING' && doc.fileUrl) {
-        documentUrls.vibeCoding = doc.fileUrl;
-      } else if (doc.docType === 'UX_PLAYBOOK' && doc.fileUrl) {
-        documentUrls.uxPlaybook = doc.fileUrl;
-      }
-    }
-
-    // Verify all documents are available
-    if (!documentUrls.validation || !documentUrls.vibeCoding || !documentUrls.uxPlaybook) {
-      const missing = [];
-      if (!documentUrls.validation) missing.push('Validation Document');
-      if (!documentUrls.vibeCoding) missing.push('Vibe Coding Prompts');
-      if (!documentUrls.uxPlaybook) missing.push('UX Playbook');
-      throw new Error(`Missing documents: ${missing.join(', ')}`);
-    }
-
-    console.log(`✓ Found all 3 documents, sending email to ${args.userId}...`);
-
-    // Send the email using the existing sendFounderKitEmail action
-    const result = await ctx.runAction(api.email.sendFounderKitEmail, {
-      to: args.userId,
-      firstName: args.firstName,
-      lastName: args.lastName,
-      documentUrls: {
-        validation: documentUrls.validation,
-        vibeCoding: documentUrls.vibeCoding,
-        uxPlaybook: documentUrls.uxPlaybook,
-      },
-    });
-
-    return result;
-  },
-});
+  try {
+    const { subject, html, text } = buildKitEmail(input);
+    const { error } = await new Resend(apiKey).emails.send({ from: FROM, to, subject, html, text });
+    if (error) throw new Error(error.message);
+    console.log(`Kit ${input.kitId}: email sent`);
+    return { emailStatus: "sent" };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Kit ${input.kitId}: email failed:`, message);
+    return { emailStatus: "failed", emailError: message };
+  }
+}

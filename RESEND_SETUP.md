@@ -26,74 +26,30 @@ By default, emails are sent from `onboarding@resend.dev`. To use your own domain
 
 1. **Add your domain** in Resend dashboard
 2. **Verify DNS records** (Resend provides the records)
-3. **Update the `from` address** in `convex/email.ts`:
+3. **Update the `FROM` constant** in `convex/email.ts`:
 
 ```typescript
-from: 'Founder\'s Idea Kit <hello@yourdomain.com>',
+const FROM = "Founder's Idea Kit <hello@yourdomain.com>";
 ```
 
-## 🧪 Step 4: Test the Email Function
+## 🔗 Step 4: Set the Site URL (Optional)
 
-You can test the email function in the Convex dashboard:
+The email button links to `<SITE_URL>/kit/<kitId>`. It defaults to `https://founder.arrownorth.design`:
 
-1. Open: http://127.0.0.1:6790
-2. Go to **Functions** → `email:sendEmail`
-3. Run with test data:
-
-```json
-{
-  "to": "your-email@example.com",
-  "subject": "Test Email",
-  "html": "<p>This is a test email!</p>"
-}
+```bash
+npx convex env set SITE_URL https://founder.arrownorth.design
 ```
 
-## 🚀 Step 5: Integrate with Form Submission
+## 🚀 Step 5: How It Works
 
-The email is automatically sent after documents are generated. The flow:
+One email is sent per kit, from `kits.generateKit`, once the kit is ready:
 
-1. User submits form
-2. Documents generate (30-60 seconds)
-3. Email is sent with download links
-4. User sees results screen
+1. User submits form (`kits.startKit`)
+2. Kit generates in the background
+3. Email is sent with one "Open your kit" button to `/kit/<kitId>` (no attachments)
+4. The result is saved on the kit as `emailStatus` (`sent`, `skipped` or `failed`) plus `emailError`
 
-## 📋 What's Included
-
-### Two Email Functions:
-
-**1. `sendEmail` (Generic)**
-```typescript
-await sendEmail({
-  to: "user@example.com",
-  subject: "Hello!",
-  html: "<p>Your content here</p>",
-  from: "optional@yourdomain.com"
-});
-```
-
-**2. `sendFounderKitEmail` (Specialized)**
-```typescript
-await sendFounderKitEmail({
-  to: "user@example.com",
-  firstName: "John",
-  lastName: "Doe",
-  documentUrls: {
-    validation: "https://...",
-    vibeCoding: "https://...",
-    uxPlaybook: "https://..."
-  }
-});
-```
-
-## 🎨 Email Template Features
-
-The Founder Kit email includes:
-- ✅ Beautiful branded design
-- ✅ Personalized greeting
-- ✅ Three download buttons
-- ✅ Description of each document
-- ✅ Mobile-responsive
-- ✅ Professional styling
+If `RESEND_API_KEY` is missing the email is `skipped`; if Resend errors it is `failed`. Neither marks the kit failed.
 
 ## 💰 Pricing
 

@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
 
-interface EmailCaptureScreenProps {
-  onSubmit: (email: string, firstName: string, lastName: string) => void;
+export interface ContactDetails {
+  email: string;
+  firstName: string;
+  lastName: string;
 }
 
-export function EmailCaptureScreen({ onSubmit }: EmailCaptureScreenProps) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+interface EmailCaptureScreenProps {
+  onSubmit: (email: string, firstName: string, lastName: string) => void;
+  initialValues?: ContactDetails;
+  error?: string | null;
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+export function EmailCaptureScreen({ onSubmit, initialValues, error }: EmailCaptureScreenProps) {
+  const [firstName, setFirstName] = useState(initialValues?.firstName ?? '');
+  const [lastName, setLastName] = useState(initialValues?.lastName ?? '');
+  const [email, setEmail] = useState(initialValues?.email ?? '');
+
+  const submit = () => {
     if (firstName.trim() && lastName.trim() && email.trim()) {
       onSubmit(email, firstName, lastName);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submit();
   };
 
   const inputClass = "w-full bg-white text-brand-dark rounded-xl p-4 md:p-5 text-lg md:text-xl focus:outline-none focus:ring-2 focus:ring-brand-accent shadow-inner";
@@ -25,8 +37,24 @@ export function EmailCaptureScreen({ onSubmit }: EmailCaptureScreenProps) {
           Almost there.
         </h1>
         <p className="text-brand-surface/90 text-lg md:text-xl mb-10 md:mb-12">
-          Enter your email to access the downloads.
+          We'll send you a link to your kit so you can come back to it anytime.
         </p>
+
+        {error &&
+        <div
+          role="alert"
+          className="mb-6 bg-white/5 border border-brand-cta/40 rounded-xl p-4 md:p-6">
+
+            <p className="text-brand-surface text-base md:text-lg mb-4">{error}</p>
+            <button
+            type="button"
+            onClick={submit}
+            className="w-full min-h-[44px] bg-brand-cta text-brand-dark py-3 rounded-lg font-bold text-base md:text-lg hover:bg-brand-cta/90 transition-colors">
+
+              Try again
+            </button>
+          </div>
+        }
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 md:gap-5">
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
@@ -65,7 +93,7 @@ export function EmailCaptureScreen({ onSubmit }: EmailCaptureScreenProps) {
           </button>
 
           <p className="text-center text-brand-surface/60 text-sm md:text-base mt-4">
-            No account needed. Enter your email to access the downloads.
+            No account needed.
           </p>
         </form>
       </div>
